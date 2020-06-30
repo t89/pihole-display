@@ -92,8 +92,8 @@ x = 0
 
 
 # Load default font.
-font_path = './PressStart2P.ttf'
-icon_font_path = './pixel_dingbats-7.ttf'
+font_path = './fonts/PressStart2P.ttf'
+icon_font_path = './fonts/pixel_dingbats-7.ttf'
 
 font_size = 8
 font = ImageFont.load_default()
