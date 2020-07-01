@@ -67,7 +67,7 @@ class StatusGrabber():
 
     def get_weather(self):
         # every half-hour
-        if (time.time() - self.last_weather_check >= 1800):
+        if (time.time() - self.last_weather_check >= 300):
             self.load_weather()
 
         return self.weather
