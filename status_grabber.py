@@ -41,6 +41,17 @@ class StatusGrabber():
         # return time.strftime("%T", time.localtime())
         return current_time
 
+    def check_replace_known_client(self, client_id):
+        try:
+            with open('./known_clients', 'r', encoding='utf-8') as known_clients_file:
+                for line in known_clients_file:
+                    client_list = line.split()
+                    if (client_id == client_list[0]):
+                        return ' '.join(client_list[1:])
+        except IOError as e:
+            print(e)
+
+        return client_id
 
     def refresh_pihole_stats(self):
         stats = {}
