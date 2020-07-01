@@ -58,19 +58,19 @@ class StatusGrabber():
         cmd = "pihole -c -e"
         stat_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
         # print(stat_string)
-        raw_stat_array            = stat_string.split()
-        stats['version_core']     = raw_stat_array[raw_stat_array.index('Core:')+1]
-        stats['version_web']      = raw_stat_array[raw_stat_array.index('Web:')+1]
-        stats['version_ftl']      = raw_stat_array[raw_stat_array.index('FTL:')+1]
-        stats['hostname']         = raw_stat_array[raw_stat_array.index('Hostname:')+1]
-        stats['uptime']           = raw_stat_array[raw_stat_array.index('Uptime:')+1]
-        stats['status']           = raw_stat_array[raw_stat_array.index('Pi-hole:')+1]
-        stats['client_count']           = raw_stat_array[raw_stat_array.index('(Leased:')+1]
-        stats['today_percentage'] = raw_stat_array[raw_stat_array.index('Today:')+1][:-1]
-        stats['blocking']         = raw_stat_array[raw_stat_array.index('(Blocking:')+1]
-        stats['ratio']            = (raw_stat_array[raw_stat_array.index('(Total:')+1],
-                                     raw_stat_array[raw_stat_array.index('(Total:')+3])
-        stats['topclient']        = self.check_replace_known_client(raw_stat_array[raw_stat_array.index('Client:')+1])
+        raw_stat_list            = stat_string.split()
+        stats['version_core']     = raw_stat_list[raw_stat_list.index('Core:')+1]
+        stats['version_web']      = raw_stat_list[raw_stat_list.index('Web:')+1]
+        stats['version_ftl']      = raw_stat_list[raw_stat_list.index('FTL:')+1]
+        stats['hostname']         = raw_stat_list[raw_stat_list.index('Hostname:')+1]
+        stats['uptime']           = raw_stat_list[raw_stat_list.index('Uptime:')+1]
+        stats['status']           = raw_stat_list[raw_stat_list.index('Pi-hole:')+1]
+        stats['client_count']           = raw_stat_list[raw_stat_list.index('(Leased:')+1]
+        stats['today_percentage'] = raw_stat_list[raw_stat_list.index('Today:')+1][:-1]
+        stats['blocking']         = raw_stat_list[raw_stat_list.index('(Blocking:')+1]
+        stats['ratio']            = (raw_stat_list[raw_stat_list.index('(Total:')+1],
+                                     raw_stat_list[raw_stat_list.index('(Total:')+3])
+        stats['topclient']        = self.check_replace_known_client(raw_stat_list[raw_stat_list.index('Client:')+1])
 
         self.stats = stats
 
@@ -122,15 +122,15 @@ class StatusGrabber():
         except subprocess.CalledProcessError as e:
             print(e)
 
-        raw_weather_array = weather_string.split(',')
+        raw_weather_list = weather_string.split(',')
 
-        weather = {'location' : raw_weather_array[0],
-                   'condition' : raw_weather_array[1],
-                   'temperature' : raw_weather_array[2],
-                   'humidity' : raw_weather_array[3],
-                   'wind' : raw_weather_array[4],
-                   'precipitation' : raw_weather_array[5],
-                   'probability' : raw_weather_array[6].replace('\n','')}
+        weather = {'location' : raw_weather_list[0],
+                   'condition' : raw_weather_list[1],
+                   'temperature' : raw_weather_list[2],
+                   'humidity' : raw_weather_list[3],
+                   'wind' : raw_weather_list[4],
+                   'precipitation' : raw_weather_list[5],
+                   'probability' : raw_weather_list[6].replace('\n','')}
 
         # If probability is 0, an empty string is returned
         if (weather['probability'] is ''):
