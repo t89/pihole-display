@@ -62,6 +62,18 @@ def draw_bar_horizontal(origin, size, percentage):
                     x1 + norm_percentage * (width - 2 * border_stroke),
                     y2 - 2 * border_stroke), fill=255)
 
+def get_horizontal_offset(text, font, tick):
+    text_width = draw.textsize(text=text, font=font)[0]
+    if (text_width > width):
+        # should scroll
+
+        delta = text_width - width
+        step_size = delta / max_fps * 2
+
+        return (max_fps / 2 - tick) * step_size
+    else:
+        return 0
+
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
 
