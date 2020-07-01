@@ -1,5 +1,6 @@
 import time
 import subprocess
+import requests
 
 from datetime import datetime
 
@@ -123,10 +124,13 @@ class StatusGrabber():
             # d    Dusk*.
 
         weather_format_string = '%l,%C,%t,%h,%w,%p,%o,%P'
-        cmd = 'curl wttr.in/{}?format="{}"'.format(location, weather_format_string)
+        url = 'https://wttr.in/{}?format="{}"'.format(location, weather_format_string)
 
         try:
-            weather_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
+            response = requests.get(url)
+            ##
+            # Note to myself: response.text is not a function, while response.json() is
+            weather_string = response.text
         except subprocess.CalledProcessError as e:
             print(e)
 
