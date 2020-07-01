@@ -1,5 +1,5 @@
 #
-#  status_grabber.py
+#  stat_grabber.py
 #  pihole-display
 #
 #  Created by Thomas Johannesmeyer (thomas@geeky.gent) on 26.06.2020
@@ -14,7 +14,7 @@ import psutil
 
 from datetime import datetime
 
-class StatusGrabber():
+class StatGrabber():
 
     def __init__(self):
         self.encoding = 'utf-8'

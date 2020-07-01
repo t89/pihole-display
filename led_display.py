@@ -17,7 +17,7 @@ import busio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
-from status_grabber import StatusGrabber
+from stat_grabber import StatGrabber
 
 
 def update_pihole_stats():
@@ -92,7 +92,7 @@ i2c = busio.I2C(SCL, SDA)
 # to the right size for your display!
 disp = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
 
-stat_grabber = StatusGrabber()
+stat_grabber = StatGrabber()
 
 # Clear display.
 disp.fill(0)
