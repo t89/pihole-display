@@ -253,9 +253,14 @@ while True:
 
     elif (current_state == 3):
         draw.text((x, font_offset), 'Top Client:', font=small_font, fill=255)
-        draw.text((x, font_offset + font_size), '{0:>15}'.format(ph_top_client), font=small_font, fill=255)
-        draw.text((x, font_offset + half_size), 'Uptime:', font=small_font, fill=255)
-        draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format(ph_uptime[:-3]), font=small_font, fill=255)
+        # draw.text((x, font_offset + font_size), '{0:>15}'.format(ph_top_client), font=half_size_font, fill=255)
+        offset = get_horizontal_offset(text=ph_top_client, font=half_size_font, tick=tick)
+        draw.text((x + offset, font_offset + font_size), '{}'.format(ph_top_client), font=half_size_font, fill=255)
+
+        draw.text((x, font_offset + half_size + font_size), 'Clients:', font=small_font, fill=255)
+        draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format('{}/{}'.format(ph_active_device_count, ph_known_client_count)), font=small_font, fill=255)
+        # draw.text((x, font_offset + half_size), 'Uptime:', font=small_font, fill=255)
+        # draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format(ph_uptime[:-3]), font=small_font, fill=255)
 
     else:
         cpu_percentage = float(stat_grabber.get_cpu_load()[:-1])/100.0
