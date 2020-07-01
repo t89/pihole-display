@@ -260,7 +260,9 @@ while True:
         size = (width - progressbar_width - 2, half_size - 2)
         draw_bar_horizontal(origin, size, ph_q_perc)
 
-        draw.text((x, font_offset + half_size + font_size), '({}/{}'.format(ph_q_blocked, ph_q_total), font=small_font, fill=255)
+        block_ratio_string = '({}/{}'.format(ph_q_blocked, ph_q_total)
+        block_ratio_h_offset = get_horizontal_offset(text=block_ratio_string, font=small_font, tick=tick)
+        draw.text((x + block_ratio_h_offset, font_offset + half_size + font_size), block_ratio_string, font=small_font, fill=255)
 
     elif (current_state == 3):
         draw.text((x, font_offset), 'Top Client:', font=small_font, fill=255)
