@@ -1,3 +1,12 @@
+#
+#  status_grabber.py
+#  pihole-display
+#
+#  Created by Thomas Johannesmeyer (thomas@geeky.gent) on 26.06.2020
+#  Copyright (c) 2020 www.geeky.gent. All rights reserved.
+#
+
+
 import time
 import subprocess
 import requests

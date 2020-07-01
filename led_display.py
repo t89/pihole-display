@@ -1,6 +1,13 @@
-# This example is for use on (Linux) computers that are using CPython with
-# Adafruit Blinka to support CircuitPython libraries. CircuitPython does
-# not support PIL/pillow (python imaging library)!
+#!/usr/bin/env python
+#
+#  led_display.py
+#  pihole-display
+#
+#  Created by Thomas Johannesmeyer (thomas@geeky.gent) on 25.06.2020
+#  Copyright (c) 2020 www.geeky.gent. All rights reserved.
+#
+# TODO: Refactor. Content of this file should become a class
+
 
 import time
 import subprocess
@@ -16,8 +23,6 @@ from status_grabber import StatusGrabber
 
 def update_pihole_stats():
     """ Updates global pihole variables """
-
-    # TODO: Refactor. Content of this file should become a class
     global ph_q_blocked, ph_q_total, ph_q_perc, ph_top_client, ph_uptime, ph_active_device_count, ph_known_client_count
 
     stat_grabber.refresh_pihole_stats()
@@ -63,6 +68,9 @@ def draw_bar_horizontal(origin, size, percentage):
                     y2 - 2 * border_stroke), fill=255)
 
 def get_horizontal_offset(text, font, tick):
+    """ Takes a text, a font and the current frame count (tick) to
+    generate an horizontal scrolling offset """
+
     text_width = draw.textsize(text=text, font=font)[0]
     if (text_width > width):
         # should scroll
@@ -74,13 +82,18 @@ def get_horizontal_offset(text, font, tick):
     else:
         return 0
 
+##
+# Instantiate actors
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
 
+##
 # Create the SSD1306 OLED class.
-# The first two parameters are the pixel width and pixel height.  Change these
+# The first two parameters are the pixel width and pixel height. Change these
 # to the right size for your display!
 disp = adafruit_ssd1306.SSD1306_I2C(128, 32, i2c)
+
+stat_grabber = StatusGrabber()
 
 # Clear display.
 disp.fill(0)
@@ -103,15 +116,16 @@ max_fps = 30
 delay = 1.0/max_fps
 
 # Move left to right keeping track of the current x position for drawing shapes.
+# TODO: Refactor. Leftover from the initial sample code. Still needed?
 x = 0
 
-# Load default font.
-font_path = './fonts/PressStart2P.ttf'
-icon_font_path = './fonts/pixel_dingbats-7.ttf'
-
 ##
+# Font Configuration
 # Kept for reference
 # small_font = ImageFont.load_default()
+
+font_path = './fonts/PressStart2P.ttf'
+icon_font_path = './fonts/pixel_dingbats-7.ttf'
 
 font_size = 8
 small_font = ImageFont.truetype(font_path, font_size)
@@ -125,25 +139,20 @@ half_size = 16
 half_size_font = ImageFont.truetype(font_path, half_size)
 half_size_icon_font = ImageFont.truetype(icon_font_path, half_size)
 
-# Alternatively load a TTF font.  Make sure the .ttf font file is in the
-# same directory as the python script!
-# Some other nice fonts to try: http://www.dafont.com/bitmap.php
-# font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 9)
 
-stat_grabber = StatusGrabber()
 
 # Config
-swap_threshold    = 10
-max_states        = 4
+swap_threshold    = 10 # time in seconds after which the next screen will be shown
+screen_count      = 4
 progressbar_width = 1
-font_offset       = 0 # some fonts do not align properly
+font_offset       = 0  # some fonts do not align properly
 icon_font_offset  = -4 # some fonts do not align properly
 
 # Calculated configuration
 step_size = width/max_fps/swap_threshold
 
+##
 # State 0
-
 ph_q_blocked  = 0
 ph_q_total    = 0
 ph_q_perc     = 0
@@ -160,7 +169,6 @@ time_string   = stat_grabber.get_time()
 weather_line1 = ''
 weather_line2 = ''
 weather_icon  = ''
-
 
 ##
 # Helper
@@ -179,7 +187,7 @@ while True:
         last_swap_time = now
 
     if should_swap:
-        current_state = (current_state + 1) % max_states
+        current_state = (current_state + 1) % screen_count
 
         ##
         # Put heavy load tasks here. These get executed _once_ when the state is swapped
