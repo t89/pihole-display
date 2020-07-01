@@ -18,7 +18,7 @@ def update_pihole_stats():
     """ Updates global pihole variables """
 
     # TODO: Refactor. Content of this file should become a class
-    global ph_q_blocked, ph_q_total, ph_q_perc, ph_top_client, ph_uptime
+    global ph_q_blocked, ph_q_total, ph_q_perc, ph_top_client, ph_uptime, ph_active_device_count, ph_known_client_count
 
     stat_grabber.refresh_pihole_stats()
     pihole_stats = stat_grabber.get_pihole_stats()
@@ -28,6 +28,8 @@ def update_pihole_stats():
     ph_q_perc     = int(pihole_stats['today_percentage'])/100.0
     ph_top_client = pihole_stats['topclient'].replace('.lan', '')
     ph_uptime     = pihole_stats['uptime']
+    ph_active_device_count = pihole_stats['active_device_count']
+    ph_known_client_count = pihole_stats['known_client_count']
 
 def draw_bar_horizontal(origin, size, percentage):
     """ Use draw to draw progress bars within provided dimensions """
@@ -135,6 +137,8 @@ ph_q_total    = 0
 ph_q_perc     = 0
 ph_top_client = ''
 ph_uptime     = ''
+ph_active_device_count = ''
+ph_known_client_count = ''
 
 update_pihole_stats()
 

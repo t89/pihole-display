@@ -19,6 +19,13 @@ class StatusGrabber():
         cmd = "hostname -I | cut -d' ' -f1"
         return subprocess.check_output(cmd, shell=True).decode(self.encoding)
 
+    def get_active_network_device_count(self):
+        cmd = "sudo arp -a | wc -l"
+        active_device_count = subprocess.check_output(cmd, shell=True).decode(self.encoding)
+        active_device_count = str(int(active_device_count)-1) # :3
+        self.stats['active_device_count'] = active_device_count
+        return active_device_count
+
     def get_cpu_load(self):
         cmd = "top -bn1 | grep load | awk '{printf \"%.2f\", $(NF-2)}'"
         return subprocess.check_output(cmd, shell=True).decode(self.encoding)
@@ -58,21 +65,22 @@ class StatusGrabber():
         cmd = "pihole -c -e"
         stat_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
         # print(stat_string)
-        raw_stat_list            = stat_string.split()
-        stats['version_core']     = raw_stat_list[raw_stat_list.index('Core:')+1]
-        stats['version_web']      = raw_stat_list[raw_stat_list.index('Web:')+1]
-        stats['version_ftl']      = raw_stat_list[raw_stat_list.index('FTL:')+1]
-        stats['hostname']         = raw_stat_list[raw_stat_list.index('Hostname:')+1]
-        stats['uptime']           = raw_stat_list[raw_stat_list.index('Uptime:')+1]
-        stats['status']           = raw_stat_list[raw_stat_list.index('Pi-hole:')+1]
-        stats['client_count']           = raw_stat_list[raw_stat_list.index('(Leased:')+1]
-        stats['today_percentage'] = raw_stat_list[raw_stat_list.index('Today:')+1][:-1]
-        stats['blocking']         = raw_stat_list[raw_stat_list.index('(Blocking:')+1]
-        stats['ratio']            = (raw_stat_list[raw_stat_list.index('(Total:')+1],
+        raw_stat_list               = stat_string.split()
+        stats['version_core']       = raw_stat_list[raw_stat_list.index('Core:')+1]
+        stats['version_web']        = raw_stat_list[raw_stat_list.index('Web:')+1]
+        stats['version_ftl']        = raw_stat_list[raw_stat_list.index('FTL:')+1]
+        stats['hostname']           = raw_stat_list[raw_stat_list.index('Hostname:')+1]
+        stats['uptime']             = raw_stat_list[raw_stat_list.index('Uptime:')+1]
+        stats['status']             = raw_stat_list[raw_stat_list.index('Pi-hole:')+1]
+        stats['known_client_count'] = raw_stat_list[raw_stat_list.index('(Leased:')+1]
+        stats['today_percentage']   = raw_stat_list[raw_stat_list.index('Today:')+1][:-1]
+        stats['blocking']           = raw_stat_list[raw_stat_list.index('(Blocking:')+1]
+        stats['ratio']              = (raw_stat_list[raw_stat_list.index('(Total:')+1],
                                      raw_stat_list[raw_stat_list.index('(Total:')+3])
-        stats['topclient']        = self.check_replace_known_client(raw_stat_list[raw_stat_list.index('Client:')+1])
+        stats['topclient']          = self.check_replace_known_client(raw_stat_list[raw_stat_list.index('Client:')+1])
 
         self.stats = stats
+        self.get_active_network_device_count()
 
     def get_pihole_stats(self):
         return self.stats

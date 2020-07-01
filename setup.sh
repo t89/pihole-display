@@ -20,6 +20,9 @@ sudo apt update -y
 # full-upgrade is used in preference to a simple upgrade, as it also picks up any dependency changes that may have been made
 sudo apt full-upgrade -y
 
+# Detect network devices (arp)
+sudo apt-get install net-tools
+
 sudo apt install python3-pip -y
 
 # LED Display
