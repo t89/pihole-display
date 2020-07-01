@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # See https://stackoverflow.com/a/246128/3561275
 SOURCE="${BASH_SOURCE[0]}"
