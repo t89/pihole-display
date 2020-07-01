@@ -27,6 +27,8 @@ def update_pihole_stats():
     ph_uptime = pihole_stats['uptime']
 
 def draw_bar_horizontal(origin, size, percentage):
+    norm_percentage = max(min(1, percentage), 0)
+
     border_stroke = 1
     # print('Origin: {}    Size: {}'.format(origin, size))
     x1 = origin[0]
@@ -50,7 +52,7 @@ def draw_bar_horizontal(origin, size, percentage):
 
     draw.rectangle((x1 + 2 * border_stroke,
                     y1 + 2 * border_stroke,
-                    x1 + percentage * (width - 2 * border_stroke),
+                    x1 + norm_percentage * (width - 2 * border_stroke),
                     y2 - 2 * border_stroke), fill=255)
 
 # Create the I2C interface.
