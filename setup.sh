@@ -34,5 +34,5 @@ sudo pip3 install --upgrade adafruit-circuitpython-ssd1306
 sudo pip3 install --upgrade adafruit circuitpython-rgb-display
 
 # Both
-sudo pip3 install --upgrade adafruit-blinka spidev pillow linux_metrics
+sudo pip3 install --upgrade adafruit-blinka spidev pillow
 ##

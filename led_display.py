@@ -17,7 +17,6 @@ import busio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
-from linux_metrics import cpu_stat
 from status_grabber import StatusGrabber
 
 
