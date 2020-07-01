@@ -22,4 +22,6 @@ else
     # add to auto start
     sudo echo "bash $DIR/$script_name &" >> /etc/rc.local
     sudo echo "exit 0" >> /etc/rc.local
+
+    sudo chmod +x /etc/rc.local
 fi
