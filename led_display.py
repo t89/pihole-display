@@ -193,10 +193,10 @@ while True:
                 weather_icon = rain_icon
             elif ('cloud' in condition.lower()):
                 weather_icon = cloud_icon
-            elif ('light' in condition.lower()):
-                weather_icon = lightning_icon
             elif ('snow' in condition.lower()):
                 weather_icon = snow_icon
+            elif ('thunder' in condition.lower()) or ('storm' in condition.lower()):
+                weather_icon = lightning_icon
             else:
                 weather_icon = clock_icon
 
