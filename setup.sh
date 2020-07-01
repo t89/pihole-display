@@ -28,6 +28,9 @@ sudo apt-get install net-tools
 
 sudo apt install python3-pip -y
 
+# Read system stats
+sudo pip3 install psutil
+
 # LED Display
 sudo apt-get install libtiff5 -y
 sudo apt-get install libopenjp2-7 -y

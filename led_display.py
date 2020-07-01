@@ -276,8 +276,8 @@ while True:
         # draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format(ph_uptime[:-3]), font=small_font, fill=255)
 
     else:
-        cpu_percentage = float(stat_grabber.get_cpu_load()[:-1])/100.0
-        ram_percentage = float(stat_grabber.get_memory_percentage()[:-1])/100.0 # cut off percentage sign
+        cpu_percentage = float(stat_grabber.get_cpu_load())/100.0
+        ram_percentage = float(stat_grabber.get_memory_percentage())/100.0 # cut off percentage sign
 
         draw.text((x, font_offset), 'CPU: ', font=half_size_font, fill=255)
         draw.text((x, font_offset + half_size), 'RAM: ', font=half_size_font, fill=255)

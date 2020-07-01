@@ -10,6 +10,7 @@
 import time
 import subprocess
 import requests
+import psutil
 
 from datetime import datetime
 
@@ -37,12 +38,10 @@ class StatusGrabber():
         return active_device_count
 
     def get_cpu_load(self):
-        cmd = "top -bn1 | grep load | awk '{printf \"%.2f\", $(NF-2)}'"
-        return subprocess.check_output(cmd, shell=True).decode(self.encoding)
+        return psutil.cpu_percent()
 
     def get_memory_percentage(self):
-        cmd = "free -m | awk 'NR==2{printf \"%.2f\", $3*100/$2 }'"
-        return subprocess.check_output(cmd, shell=True).decode(self.encoding)
+        return psutil.virtual_memory().percent
 
     def get_memory_usage(self):
         cmd = "free -m | awk 'NR==2{printf \"%s/%s MB  %.2f%%\", $3,$2,$3*100/$2 }'"
