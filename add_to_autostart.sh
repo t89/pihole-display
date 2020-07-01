@@ -15,5 +15,5 @@ if [ ! "$auto_start_entry_available" -eq "1" ]; then
     echo "$script_name already in /etc/rc.local"
 else
     # add to auto start
-    sudo echo "$DIR/$script_name &" >> /etc/rc.local
+    sudo echo "sudo bash $DIR/$script_name &" >> /etc/rc.local
 fi
