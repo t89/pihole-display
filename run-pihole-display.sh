@@ -10,6 +10,17 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 cd $DIR
 
+# Update display software
 git pull origin master
 
+# Run display software in background
 python3 "$DIR/led_display.py" &
+
+##
+# Updating blocklists on the raspberry pi zero may take up to
+# 20 minutes. This process should be initiation via the web
+# administration manually
+
+# Update pihole
+pihole -up
+
