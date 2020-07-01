@@ -43,9 +43,11 @@ class StatGrabber():
     def get_memory_percentage(self):
         return psutil.virtual_memory().percent
 
-    def get_memory_usage(self):
-        cmd = "free -m | awk 'NR==2{printf \"%s/%s MB  %.2f%%\", $3,$2,$3*100/$2 }'"
-        return subprocess.check_output(cmd, shell=True).decode(self.encoding)
+    def get_memory_ratio(self):
+        mem_dict = dict(psutil.virtual_memory()._asdict())
+        used = mem_dict['used']/1024/1024        # used memory in MB
+        total = mem_dict['total']/1024/1024      # used memory in MB
+        return (round(used, 1), round(total, 1)) # tuple rounded to first decimal
 
     def get_disk_space(self):
         cmd = 'df -h | awk \'$NF=="/"{printf "%d/%d GB  %s", $3,$2,$5}\''
