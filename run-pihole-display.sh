@@ -12,4 +12,4 @@ cd $DIR
 
 git pull origin master
 
-python3 "$DIR/led_display.py &"
+python3 "$DIR/led_display.py" &
