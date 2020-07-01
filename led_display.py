@@ -15,21 +15,26 @@ from status_grabber import StatusGrabber
 
 
 def update_pihole_stats():
+    """ Updates global pihole variables """
+
+    # TODO: Refactor. Content of this file should become a class
     global ph_q_blocked, ph_q_total, ph_q_perc, ph_top_client, ph_uptime
 
     stat_grabber.refresh_pihole_stats()
     pihole_stats = stat_grabber.get_pihole_stats()
 
-    ph_q_blocked = pihole_stats['ratio'][0]
-    ph_q_total = pihole_stats['ratio'][1]
-    ph_q_perc = int(pihole_stats['today_percentage'])/100.0
+    ph_q_blocked  = pihole_stats['ratio'][0]
+    ph_q_total    = pihole_stats['ratio'][1]
+    ph_q_perc     = int(pihole_stats['today_percentage'])/100.0
     ph_top_client = pihole_stats['topclient'].replace('.lan', '')
-    ph_uptime = pihole_stats['uptime']
+    ph_uptime     = pihole_stats['uptime']
 
 def draw_bar_horizontal(origin, size, percentage):
+    """ Use draw to draw progress bars within provided dimensions """
+    border_stroke = 1
+
     norm_percentage = max(min(1, percentage), 0)
 
-    border_stroke = 1
     # print('Origin: {}    Size: {}'.format(origin, size))
     x1 = origin[0]
     y1 = origin[1]
@@ -83,24 +88,20 @@ draw.rectangle((0, 0, width, height), outline=0, fill=0)
 max_fps = 30
 delay = 1.0/max_fps
 
-# Draw some shapes.
-# First define some constants to allow easy resizing of shapes.
-# padding = -2
-# top = padding
-# bottom = height - padding
-
 # Move left to right keeping track of the current x position for drawing shapes.
 x = 0
-
 
 # Load default font.
 font_path = './fonts/PressStart2P.ttf'
 icon_font_path = './fonts/pixel_dingbats-7.ttf'
 
+##
+# Kept for reference
+# small_font = ImageFont.load_default()
+
 font_size = 8
-font = ImageFont.load_default()
-font = ImageFont.truetype(font_path, font_size)
-icon_font = ImageFont.truetype(icon_font_path, font_size)
+small_font = ImageFont.truetype(font_path, font_size)
+small_icon_font = ImageFont.truetype(icon_font_path, font_size)
 
 full_size = 32
 full_size_font = ImageFont.truetype(font_path, full_size)
@@ -118,34 +119,35 @@ half_size_icon_font = ImageFont.truetype(icon_font_path, half_size)
 stat_grabber = StatusGrabber()
 
 # Config
-swap_threshold = 10
-max_states = 4
+swap_threshold    = 10
+max_states        = 4
 progressbar_width = 1
-font_offset = 0 # some fonts do not align properly
-icon_font_offset = -4 # some fonts do not align properly
+font_offset       = 0 # some fonts do not align properly
+icon_font_offset  = -4 # some fonts do not align properly
 
 # Calculated configuration
 step_size = width/max_fps/swap_threshold
 
 # State 0
 
-ph_q_blocked = 0
-ph_q_total = 0
-ph_q_perc = 0
+ph_q_blocked  = 0
+ph_q_total    = 0
+ph_q_perc     = 0
 ph_top_client = ''
-ph_uptime = ''
+ph_uptime     = ''
 
 update_pihole_stats()
 
+##
 # State 1
-TIME = stat_grabber.get_time()
+time_string   = stat_grabber.get_time()
 weather_line1 = ''
 weather_line2 = ''
-weather_icon = ''
+weather_icon  = ''
 
 
-
-# -
+##
+# Helper
 last_swap_time = time.time()
 current_state = 0
 tick = 0
@@ -179,7 +181,7 @@ while True:
             snow_icon = b'\x4B'.decode()
             clock_icon = b'\xC3\xAE'.decode()
 
-            TIME = stat_grabber.get_time()
+            time_string = stat_grabber.get_time()
             weather = stat_grabber.get_weather()
             condition = weather['condition']
             weather_line1 = '{} {} {}'.format(condition, weather['temperature'], weather['humidity'])
@@ -212,30 +214,30 @@ while True:
     # State handling
     if (current_state == 1):
         # if (tick % 2 == 0):
-        #     time_string = '{}'.format(TIME)
+        #     time_string = '{}'.format(time)
         # else:
-        #     time_string = '{}'.format(TIME).replace(':',' ')
+        #     time_string = '{}'.format(time).replace(':',' ')
 
 
-        draw.text((x + 18, font_offset), TIME, font=half_size_font, fill=255)
+        draw.text((x + 18, font_offset), time_string, font=half_size_font, fill=255)
         draw.text((x, icon_font_offset), '{}'.format(weather_icon), font=half_size_icon_font, fill=255)
-        draw.text((x, font_offset + half_size), weather_line1, font=font, fill=255)
-        draw.text((x, font_offset + half_size + font_size), weather_line2, font=font, fill=255)
+        draw.text((x, font_offset + half_size), weather_line1, font=small_font, fill=255)
+        draw.text((x, font_offset + half_size + font_size), weather_line2, font=small_font, fill=255)
 
     elif (current_state == 2):
-        draw.text((x, font_offset), '{}'.format('Blocked'), font=font, fill=255)
+        draw.text((x, font_offset), '{}'.format('Blocked'), font=small_font, fill=255)
 
         origin = (0, font_size)
         size = (width - progressbar_width - 2, half_size - 2)
         draw_bar_horizontal(origin, size, ph_q_perc)
 
-        draw.text((x, font_offset + half_size + font_size), '({}/{}'.format(ph_q_blocked, ph_q_total), font=font, fill=255)
+        draw.text((x, font_offset + half_size + font_size), '({}/{}'.format(ph_q_blocked, ph_q_total), font=small_font, fill=255)
 
     elif (current_state == 3):
-        draw.text((x, font_offset), 'Top Client:', font=font, fill=255)
-        draw.text((x, font_offset + font_size), '{0:>15}'.format(ph_top_client), font=font, fill=255)
-        draw.text((x, font_offset + half_size), 'Uptime:', font=font, fill=255)
-        draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format(ph_uptime[:-3]), font=font, fill=255)
+        draw.text((x, font_offset), 'Top Client:', font=small_font, fill=255)
+        draw.text((x, font_offset + font_size), '{0:>15}'.format(ph_top_client), font=small_font, fill=255)
+        draw.text((x, font_offset + half_size), 'Uptime:', font=small_font, fill=255)
+        draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format(ph_uptime[:-3]), font=small_font, fill=255)
 
     else:
         cpu_percentage = float(stat_grabber.get_cpu_load()[:-1])/100.0
