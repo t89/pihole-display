@@ -253,7 +253,7 @@ while True:
 
     elif (current_state == 2):
         blocked_today_header_string = 'Blocked today:'
-        blocked_h_offset = get_horizontal_offset(text=weather_line1, font=small_font, tick=tick)
+        blocked_h_offset = get_horizontal_offset(text=blocked_today_header_string, font=small_font, tick=tick)
         draw.text((x + blocked_h_offset, font_offset), '{}'.format(blocked_today_header_string), font=small_font, fill=255)
 
         origin = (0, font_size)
