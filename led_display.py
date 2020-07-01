@@ -221,7 +221,7 @@ while True:
         #     time_string = '{}'.format(time).replace(':',' ')
 
 
-        draw.text((x + 18, font_offset), time_string, font=half_size_font, fill=255)
+        draw.text((x + 30, font_offset), time_string, font=half_size_font, fill=255)
         draw.text((x, icon_font_offset), '{}'.format(weather_icon), font=half_size_icon_font, fill=255)
         draw.text((x, font_offset + half_size), weather_line1, font=small_font, fill=255)
         draw.text((x, font_offset + half_size + font_size), weather_line2, font=small_font, fill=255)
