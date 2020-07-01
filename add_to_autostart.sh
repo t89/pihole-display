@@ -20,6 +20,6 @@ else
     sudo sed -i '$d' /etc/rc.local > /dev/null 2>&1
 
     # add to auto start
-    sudo echo "sudo bash $DIR/$script_name &" >> /etc/rc.local
+    sudo echo "bash $DIR/$script_name &" >> /etc/rc.local
     sudo echo "exit 0" >> /etc/rc.local
 fi
