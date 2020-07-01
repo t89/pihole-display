@@ -12,6 +12,9 @@ sudo sed -i 's/dtparam=spi=off/dtparam=spi=on/g' /boot/config.txt
 # Enable i2s
 sudo sed -i 's/dtparam=i2s_arm=off/dtparam=o2s_arm=on/g' /boot/config.txt
 
+# create known_clients file
+touch known_clients
+
 # System upgrade
 sudo apt-get update -y
 sudo apt-get upgrade -y
