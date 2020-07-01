@@ -77,9 +77,11 @@ class StatusGrabber():
 
         location = ""
         with open('./location', 'r', encoding='utf-8') as location_file:
+            ##
+            # TODO: Fix this sh*t u lzy bstrd
             for line in location_file:
-                location = line.replace(' ', '+')
-                break # fix this shit you lzy bstrd
+                location = line.replace('\n', '').replace(' ', '+')
+                break
 
             # c    Weather condition,
             # C    Weather condition textual name,
@@ -101,7 +103,8 @@ class StatusGrabber():
             # d    Dusk*.
 
         weather_format_string = '%l,%C,%t,%h,%w,%p,%o,%P'
-        cmd = 'curl wttr.in/{}?format={}'.format(location, weather_format_string)
+        cmd = 'curl wttr.in/{}?format="{}"'.format(location, weather_format_string)
+
         weather_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
         raw_weather_array = weather_string.split(',')
 
