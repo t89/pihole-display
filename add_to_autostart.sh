@@ -17,7 +17,7 @@ if [ ! "$auto_start_entry_available" -eq "0" ]; then
     echo "$script_name already in /etc/rc.local"
 else
     # delete last line (exit 0) from rc.local
-    sudo sed '$d' /etc/rc.local
+    sudo sed -i '$d' /etc/rc.local > /dev/null 2>&1
 
     # add to auto start
     sudo echo "sudo bash $DIR/$script_name &" >> /etc/rc.local
