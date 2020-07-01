@@ -65,11 +65,12 @@ class StatusGrabber():
         stats['hostname']         = raw_stat_array[raw_stat_array.index('Hostname:')+1]
         stats['uptime']           = raw_stat_array[raw_stat_array.index('Uptime:')+1]
         stats['status']           = raw_stat_array[raw_stat_array.index('Pi-hole:')+1]
+        stats['client_count']           = raw_stat_array[raw_stat_array.index('(Leased:')+1]
         stats['today_percentage'] = raw_stat_array[raw_stat_array.index('Today:')+1][:-1]
         stats['blocking']         = raw_stat_array[raw_stat_array.index('(Blocking:')+1]
         stats['ratio']            = (raw_stat_array[raw_stat_array.index('(Total:')+1],
                                      raw_stat_array[raw_stat_array.index('(Total:')+3])
-        stats['topclient']        = raw_stat_array[raw_stat_array.index('Client:')+1]
+        stats['topclient']        = self.check_replace_known_client(raw_stat_array[raw_stat_array.index('Client:')+1])
 
         self.stats = stats
 
