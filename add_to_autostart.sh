@@ -11,7 +11,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 script_name="run-pihole-display.sh"
 auto_start_entry_available="$(sudo grep '$script_name' /etc/rc.local | wc -l)"
-if [ ! "$auto_start_entry_available" -eq "1" ]; then
+if [ ! "$auto_start_entry_available" -eq "0" ]; then
     echo "$script_name already in /etc/rc.local"
 else
     # add to auto start
