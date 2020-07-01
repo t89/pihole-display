@@ -184,8 +184,10 @@ while True:
             time_string = stat_grabber.get_time()
             weather = stat_grabber.get_weather()
             condition = weather['condition']
+            # Round precipitation
+            precipitation = round(float(weather['precipitation'][:-2]))
             weather_line1 = '{} {} {}'.format(condition, weather['temperature'], weather['humidity'])
-            weather_line2 = '{} {}%({})'.format(weather['wind'], weather['probability'], weather['precipitation'])
+            weather_line2 = '{} {}%({}mm)'.format(weather['wind'], weather['probability'], precipitation)
 
             if ('sun' in condition.lower()):
                 weather_icon = sun_icon
