@@ -38,4 +38,3 @@ sudo pip3 install --upgrade adafruit circuitpython-rgb-display
 
 # Both
 sudo pip3 install --upgrade adafruit-blinka spidev pillow
-##
