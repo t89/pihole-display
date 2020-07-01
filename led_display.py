@@ -244,14 +244,18 @@ while True:
         # else:
         #     time_string = '{}'.format(time).replace(':',' ')
 
+        wl1_h_offset = get_horizontal_offset(text=weather_line1, font=small_font, tick=tick)
+        wl2_h_offset = get_horizontal_offset(text=weather_line2, font=small_font, tick=tick)
 
         draw.text((x + 30, font_offset), time_string, font=half_size_font, fill=255)
         draw.text((x, icon_font_offset), '{}'.format(weather_icon), font=half_size_icon_font, fill=255)
-        draw.text((x, font_offset + half_size), weather_line1, font=small_font, fill=255)
-        draw.text((x, font_offset + half_size + font_size), weather_line2, font=small_font, fill=255)
+        draw.text((x + wl1_h_offset, font_offset + half_size), weather_line1, font=small_font, fill=255)
+        draw.text((x + wl2_h_offset, font_offset + half_size + font_size), weather_line2, font=small_font, fill=255)
 
     elif (current_state == 2):
-        draw.text((x, font_offset), '{}'.format('Blocked today:'), font=small_font, fill=255)
+        blocked_today_header_string = 'Blocked today:'
+        blocked_h_offset = get_horizontal_offset(text=weather_line1, font=small_font, tick=tick)
+        draw.text((x + blocked_h_offset, font_offset), '{}'.format(blocked_today_header_string), font=small_font, fill=255)
 
         origin = (0, font_size)
         size = (width - progressbar_width - 2, half_size - 2)
