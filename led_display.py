@@ -227,7 +227,7 @@ while True:
         draw.text((x, font_offset + half_size + font_size), weather_line2, font=small_font, fill=255)
 
     elif (current_state == 2):
-        draw.text((x, font_offset), '{}'.format('Blocked'), font=small_font, fill=255)
+        draw.text((x, font_offset), '{}'.format('Blocked today:'), font=small_font, fill=255)
 
         origin = (0, font_size)
         size = (width - progressbar_width - 2, half_size - 2)

@@ -105,7 +105,11 @@ class StatusGrabber():
         weather_format_string = '%l,%C,%t,%h,%w,%p,%o,%P'
         cmd = 'curl wttr.in/{}?format="{}"'.format(location, weather_format_string)
 
-        weather_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
+        try:
+            weather_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
+        except subprocess.CalledProcessError as e:
+            print(e)
+
         raw_weather_array = weather_string.split(',')
 
         weather = {'location' : raw_weather_array[0],
