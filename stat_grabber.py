@@ -163,11 +163,11 @@ class StatGrabber():
             rwl_count = len(raw_weather_list)
             if (rwl_count == 0):
                 weather['status'] = 'empty'
-            elif (rwl_count == 1):
+            elif (rwl_count <= 2):
                 ##
                 # If an error happens it is the only response available
                 # e.g.: ['Unknown location; please try ~49.187089', '-97.937622\n']
-                weather['status'] = raw_weather_list[0].replace('\n', '')
+                weather['status'] = ' '.join(raw_weather_list).replace('\n', '')
             else:
                 weather = {'location' : raw_weather_list[0],
                         'condition' : raw_weather_list[1],
