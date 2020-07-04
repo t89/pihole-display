@@ -140,11 +140,11 @@ class StatGrabber():
         weather = {'status' : 'success',
                    'location' : '',
                    'condition' : '',
-                   'temperature' : '',
-                   'humidity' : '',
-                   'wind' : '',
-                   'precipitation' : '',
-                   'probability' : ''}
+                   'temperature' : '0',
+                   'humidity' : '0',
+                   'wind' : '0',
+                   'precipitation' : '0',
+                   'probability' : '0'}
 
         try:
             response = requests.get(url)
