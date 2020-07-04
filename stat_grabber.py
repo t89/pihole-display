@@ -136,7 +136,15 @@ class StatGrabber():
         weather_format_string = '%l,%C,%t,%h,%w,%p,%o,%P'
         url = 'https://wttr.in/{}?format="{}"'.format(location, weather_format_string)
 
-        weather = {}
+
+        weather = {'status' : 'success',
+                   'location' : '',
+                   'condition' : '',
+                   'temperature' : '',
+                   'humidity' : '',
+                   'wind' : '',
+                   'precipitation' : '',
+                   'probability' : ''}
 
         try:
             response = requests.get(url)
@@ -145,27 +153,29 @@ class StatGrabber():
             weather_string = response.text
         except subprocess.CalledProcessError as e:
             print(e)
-
-            weather = {'location' : '',
-                    'condition' : 'weather error',
-                    'temperature' : '',
-                    'humidity' : '',
-                    'wind' : '',
-                    'precipitation' : '',
-                    'probability' : ''}
+            weather['status'] = str(e)
 
         else:
             # in case of no-exception
 
             raw_weather_list = weather_string.split(',')
 
-            weather = {'location' : raw_weather_list[0],
-                    'condition' : raw_weather_list[1],
-                    'temperature' : raw_weather_list[2],
-                    'humidity' : raw_weather_list[3],
-                    'wind' : raw_weather_list[4],
-                    'precipitation' : raw_weather_list[5],
-                    'probability' : raw_weather_list[6].replace('\n','')}
+            rwl_count = len(raw_weather_list)
+            if (rwl_count == 0):
+                weather['status'] = 'empty'
+            elif (rwl_count == 1):
+                ##
+                # If an error happens it is the only response available
+                # e.g.: ['Unknown location; please try ~49.187089', '-97.937622\n']
+                weather['status'] = raw_weather_list[0].replace('\n', '')
+            else:
+                weather = {'location' : raw_weather_list[0],
+                        'condition' : raw_weather_list[1],
+                        'temperature' : raw_weather_list[2],
+                        'humidity' : raw_weather_list[3],
+                        'wind' : raw_weather_list[4],
+                        'precipitation' : raw_weather_list[5],
+                        'probability' : raw_weather_list[6].replace('\n','')}
 
             # If probability is 0, an empty string is returned
             if (weather['probability'] is ''):
