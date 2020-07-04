@@ -177,9 +177,21 @@ class StatGrabber():
                         'precipitation' : raw_weather_list[5],
                         'probability' : raw_weather_list[6].replace('\n','')}
 
-            # If probability is 0, an empty string is returned
+            # If value is empty string, replace with zero-string instead
+            if (weather['temperature'] is ''):
+                weather['temperature'] = '0'
+
+            if (weather['humidity'] is ''):
+                weather['humidity'] = '0'
+
+            if (weather['wind'] is ''):
+                weather['wind'] = '0'
+
             if (weather['probability'] is ''):
                 weather['probability'] = '0'
+
+            if (weather['precipitation'] is ''):
+                weather['precipitation'] = '0'
 
             ##
             # Fix missing arrow chars in font PressStart2P
