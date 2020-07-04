@@ -11,6 +11,10 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
 
 # Update display software
+# git fetch --all
+# git reset --hard origin/master
+
+git stash
 git pull origin master
 
 # Run display software in background
