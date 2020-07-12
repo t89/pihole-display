@@ -26,5 +26,5 @@ python3 "$DIR/led_display.py" &
 # administration manually
 
 # Update pihole
-pihole -up
+# pihole -up
 
