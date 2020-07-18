@@ -31,6 +31,10 @@ class StatGrabber():
         return subprocess.check_output(cmd, shell=True).decode(self.encoding)
 
     def get_active_network_device_count(self):
+        # TODO: If the arp table is not flushed from time to time, this implementation
+        # will yield inaccurate results
+        # ip -s -s neigh flush all
+        # A different solution is probably the way to go
         cmd = "sudo arp -a | wc -l"
         active_device_count = subprocess.check_output(cmd, shell=True).decode(self.encoding)
         active_device_count = str(int(active_device_count)-1) # :3
