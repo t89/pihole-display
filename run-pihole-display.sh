@@ -18,7 +18,7 @@ git stash
 git pull origin master
 
 # Run display software in background
-python3 "$DIR/led_display.py" &
+python3 "$DIR/led_display.py" >> "../pihole-display.log" &
 
 ##
 # Updating blocklists on the raspberry pi zero may take up to
