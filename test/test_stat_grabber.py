@@ -19,6 +19,7 @@ def test_get_local_ip():
 @pytest.mark.sudo
 @pytest.mark.slow
 @pytest.mark.mac
+@pytest.mark.linux
 def test_active_network_device_count():
     result = stat_grabber.get_active_network_device_count()
     assert result != None
