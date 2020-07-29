@@ -23,7 +23,7 @@ def test_active_network_device_count():
     result = stat_grabber.get_active_network_device_count()
     assert result != None
 
-    # Return value is integer
+    # Check type
     assert isinstance(result, int)
 
 @pytest.mark.linux
@@ -32,7 +32,7 @@ def test_get_cpu_load():
     result = stat_grabber.get_cpu_load()
     assert result != None
 
-    # Return value is integer
+    # Check type
     assert isinstance(result, float)
 
     # Percentage between 0.0 and 100.0
@@ -44,7 +44,7 @@ def test_get_memory_percentage():
     result = stat_grabber.get_memory_percentage()
     assert result != None
 
-    # Return value is integer
+    # Check type
     assert isinstance(result, float)
 
     # Percentage between 0.0 and 100.0
