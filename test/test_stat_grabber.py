@@ -102,3 +102,4 @@ def test_get_time():
     except ValueError:
         raise ValueError('Incorrect data format, should be {}'.format(date_format))
 
+# TODO: check_replace_known_client()
