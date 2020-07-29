@@ -7,7 +7,7 @@ stat_grabber = StatGrabber()
 @pytest.mark.linux
 def test_get_local_ip():
     ip = stat_grabber.get_local_ip()
-    print(ip)
+
     assert ip != None
 
     desired_result = 4
