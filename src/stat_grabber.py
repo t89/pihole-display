@@ -54,6 +54,7 @@ class StatGrabber():
         return psutil.virtual_memory().percent
 
     def get_memory_ratio(self):
+        # REFACTOR: Rename since ratio implies factor
         mem_dict = dict(psutil.virtual_memory()._asdict())
         used = mem_dict['used']/1024/1024        # used memory in MB
         total = mem_dict['total']/1024/1024      # total memory in MB
