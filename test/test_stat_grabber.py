@@ -7,7 +7,6 @@ stat_grabber = StatGrabber()
 @pytest.mark.requires_network
 def test_get_local_ip():
     ip = stat_grabber.get_local_ip()
-
     assert ip != None
 
     desired_result = 4
