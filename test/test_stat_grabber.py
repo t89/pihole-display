@@ -49,3 +49,22 @@ def test_get_memory_percentage():
 
     # Percentage between 0.0 and 100.0
     assert (result >= 0.0) and (result <= 100.0)
+
+@pytest.mark.linux
+@pytest.mark.mac
+def test_get_memory_ratio():
+    result = stat_grabber.get_memory_ratio()
+    assert result != None
+
+    # Check type
+    assert isinstance(result, tuple)
+
+    # Tuple of two
+    assert len(result) == 2
+
+    # Check type
+    assert isinstance(result[0], float)
+    assert isinstance(result[1], float)
+
+    # used memory is smaller or equal to total
+    assert result[0]<=result[1]
