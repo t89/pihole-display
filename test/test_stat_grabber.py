@@ -38,3 +38,15 @@ def test_get_cpu_load():
 
     # Percentage between 0.0 and 100.0
     assert (result >= 0.0) and (result <= 100.0)
+
+@pytest.mark.linux
+@pytest.mark.mac
+def test_get_memory_percentage():
+    result = stat_grabber.get_memory_percentage()
+    assert result != None
+
+    # Return value is integer
+    assert isinstance(result, float)
+
+    # Percentage between 0.0 and 100.0
+    assert (result >= 0.0) and (result <= 100.0)
