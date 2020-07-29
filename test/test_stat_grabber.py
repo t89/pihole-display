@@ -68,3 +68,15 @@ def test_get_memory_ratio():
 
     # used memory is smaller or equal to total
     assert result[0]<=result[1]
+
+@pytest.mark.linux
+@pytest.mark.mac
+def test_get_disk_space():
+    result = stat_grabber.get_disk_space()
+    assert result != None
+
+    # Check type
+    assert isinstance(result, str)
+
+    # Non empty
+    assert (len(result) > 0)
