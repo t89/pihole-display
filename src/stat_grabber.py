@@ -56,7 +56,7 @@ class StatGrabber():
     def get_memory_ratio(self):
         mem_dict = dict(psutil.virtual_memory()._asdict())
         used = mem_dict['used']/1024/1024        # used memory in MB
-        total = mem_dict['total']/1024/1024      # used memory in MB
+        total = mem_dict['total']/1024/1024      # total memory in MB
         return (round(used, 1), round(total, 1)) # tuple rounded to first decimal
 
     def get_disk_space(self):
