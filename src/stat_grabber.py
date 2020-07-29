@@ -36,8 +36,14 @@ class StatGrabber():
         # ip -s -s neigh flush all
         # A different solution is probably the way to go
         cmd = "sudo arp -a | wc -l"
-        active_device_count = subprocess.check_output(cmd, shell=True).decode(self.encoding)
-        active_device_count = str(int(active_device_count)-1) # :3
+        active_device_count_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
+
+        try:
+            active_device_count = int(active_device_count_string)-1
+
+        except ValueError:
+            active_device_count = 0
+
         self.stats['active_device_count'] = active_device_count
         return active_device_count
 
