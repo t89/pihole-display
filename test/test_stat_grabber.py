@@ -97,9 +97,30 @@ def test_get_time():
 
     # Check time format
     date_format = '%H:%M'
+    with pytest.raises(ValueError) as exc:
+        datetime.datetime.strptime(result, date_format)
+    assert (exc == None)
+    # assert 'list index out of range' == str(exc)
+
+# TODO: check_replace_known_client()
+
+@pytest.mark.linux
+@pytest.mark.mac
+def test_get_time():
+    import datetime
+
+    result = stat_grabber.get_time()
+    assert result != None
+
+    # Check type
+    assert isinstance(result, str)
+
+    # Non empty
+    assert (len(result) > 0)
+
+    # Check time format
+    date_format = '%H:%M'
     try:
         datetime.datetime.strptime(result, date_format)
     except ValueError:
         raise ValueError('Incorrect data format, should be {}'.format(date_format))
-
-# TODO: check_replace_known_client()
