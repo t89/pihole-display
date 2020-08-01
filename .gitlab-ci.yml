@@ -4,6 +4,7 @@ image: "python:3.8.5-slim-buster"
 before_script:
   - python --version
   - pip install -r requirements.txt
+  - sudo apt-get install gcc python3-dev
 
 # different stages in the pipeline
 stages:
