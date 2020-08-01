@@ -95,7 +95,7 @@ def test_get_time():
     import datetime
 
     result = stat_grabber.get_time()
-    assert result != None
+    assert result is not None
 
     # Check type
     assert isinstance(result, str)
