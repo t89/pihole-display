@@ -17,7 +17,7 @@ import busio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
-from src.stat_grabber import StatGrabber
+from stat_grabber import StatGrabber
 
 
 def update_pihole_stats():
