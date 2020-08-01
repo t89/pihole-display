@@ -118,6 +118,12 @@ def test_get_time():
 @pytest.mark.linux
 @pytest.mark.pihole
 def test_get_pihole_stats():
+    """ Checks pihole stats """
+
+    ##
+    # REFACTOR: Each method should be checked individually. Also pihole stats
+    # are currently hard to test because a complete pihole instance would have
+    # to be installed within the test-container
     import datetime
 
     result = stat_grabber.get_time()
