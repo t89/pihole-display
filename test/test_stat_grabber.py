@@ -128,7 +128,7 @@ def test_get_pihole_stats():
     import datetime
 
     result = stat_grabber.get_time()
-    assert result != None
+    assert result is not None
 
     # Check type
     assert isinstance(result, str)
