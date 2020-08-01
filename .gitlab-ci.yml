@@ -25,13 +25,9 @@ static-analysis:
 test:
   stage: Test
   script:
-    # https://stackoverflow.com/a/43733357/1277898
-    - coverage run -m unittest
-    # Code Coverage
-    - coverage report --include=src/* > coverage
-    - cat coverage
+    - pytest
   tags:
     - shared
-  artifacts:
-    paths:
-      - coverage
+  # artifacts:
+  #   paths:
+  #     - coverage
