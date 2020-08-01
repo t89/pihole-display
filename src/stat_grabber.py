@@ -189,19 +189,19 @@ class StatGrabber():
                         'probability' : raw_weather_list[6].replace('\n','')}
 
             # If value is empty string, replace with zero-string instead
-            if (weather['temperature'] is ''):
+            if (weather['temperature'] == ''):
                 weather['temperature'] = '0'
 
-            if (weather['humidity'] is ''):
+            if (weather['humidity'] == ''):
                 weather['humidity'] = '0'
 
-            if (weather['wind'] is ''):
+            if (weather['wind'] == ''):
                 weather['wind'] = '0'
 
-            if (weather['probability'] is ''):
+            if (weather['probability'] == ''):
                 weather['probability'] = '0'
 
-            if (weather['precipitation'] is ''):
+            if (weather['precipitation'] == ''):
                 weather['precipitation'] = '0'
 
             ##
