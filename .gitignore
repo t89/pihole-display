@@ -1,4 +1,5 @@
 known_clients
+.develop
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
