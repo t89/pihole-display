@@ -3,7 +3,8 @@ image: "python:3.8.5-slim-buster"
 #commands to run in the Docker container before starting each job.
 before_script:
   - python --version
-  - apt-get install gcc python3-dev
+  - apt-get update
+  - apt-get install -y gcc python3-dev
   - pip install -r requirements.txt
 
 # different stages in the pipeline
