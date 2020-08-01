@@ -104,10 +104,13 @@ def test_get_time():
     assert len(result) > 0
 
     # Check time format
-    date_format = '%H:%M'
+    date_format_correct = '%H:%M'
+    datetime.datetime.strptime(result, date_format_correct)
+
+    date_format_wrong = '%H:%M:%S'
     with pytest.raises(ValueError) as exc:
-        datetime.datetime.strptime(result, date_format)
-    assert exc == None
+        datetime.datetime.strptime(result, date_format_wrong)
+
     # assert 'list index out of range' == str(exc)
 
 # TODO: check_replace_known_client()
