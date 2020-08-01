@@ -108,7 +108,7 @@ class StatGrabber():
         return self.stats
 
     def get_weather(self):
-        # every half-hour
+        # every 5 minutes
         if (time.time() - self.last_weather_check >= 300):
             self.load_weather()
 
