@@ -115,6 +115,7 @@ def test_get_time():
 
 # TODO: check_replace_known_client()
 
+
 @pytest.mark.linux
 @pytest.mark.pihole
 def test_get_pihole_stats():
