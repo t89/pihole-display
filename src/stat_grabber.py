@@ -233,13 +233,13 @@ class StatGrabber():
         fixed_southeast_arrow = b'\xE2\x86\x93\xE2\x86\x92'.decode()
 
         default_arrows = [default_leftwards_arrow,
-                        default_upwards_arrow,
-                        default_downwards_arrow,
-                        default_rightwards_arrow,
-                        default_northwest_arrow,
-                        default_northeast_arrow,
-                        default_southwest_arrow,
-                        default_southeast_arrow]
+                          default_upwards_arrow,
+                          default_downwards_arrow,
+                          default_rightwards_arrow,
+                          default_northwest_arrow,
+                          default_northeast_arrow,
+                          default_southwest_arrow,
+                          default_southeast_arrow]
 
         fixed_arrows = [fixed_leftwards_arrow,
                         fixed_upwards_arrow,
