@@ -109,7 +109,7 @@ class StatGrabber():
 
     def get_weather(self):
         # every 5 minutes
-        if (time.time() - self.last_weather_check >= 300):
+        if time.time() - self.last_weather_check >= 300:
             self.load_weather()
 
         return self.weather
@@ -162,9 +162,9 @@ class StatGrabber():
             raw_weather_list = weather_string.split(',')
 
             rwl_count = len(raw_weather_list)
-            if (rwl_count == 0):
+            if rwl_count == 0:
                 weather['status'] = 'empty'
-            elif (rwl_count <= 2):
+            elif rwl_count <= 2:
                 ##
                 # If an error happens it is the only response available
                 # e.g.: ['Unknown location; please try ~49.187089', '-97.937622\n']
@@ -179,19 +179,19 @@ class StatGrabber():
                         'probability' : raw_weather_list[6].replace('\n','')}
 
             # If value is empty string, replace with zero-string instead
-            if (weather['temperature'] == ''):
+            if weather['temperature'] == '':
                 weather['temperature'] = '0'
 
-            if (weather['humidity'] == ''):
+            if weather['humidity'] == '':
                 weather['humidity'] = '0'
 
-            if (weather['wind'] == ''):
+            if weather['wind'] == '':
                 weather['wind'] = '0'
 
-            if (weather['probability'] == ''):
+            if weather['probability'] == '':
                 weather['probability'] = '0'
 
-            if (weather['precipitation'] == ''):
+            if weather['precipitation'] == '':
                 weather['precipitation'] = '0'
 
             weather['wind'] = self.replace_arrows_in_string(weather['wind'])
