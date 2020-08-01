@@ -22,18 +22,18 @@ from src.stat_grabber import StatGrabber
 
 def update_pihole_stats():
     """ Updates global pihole variables """
-    global ph_q_blocked, ph_q_total, ph_q_perc, ph_top_client, ph_uptime, ph_active_device_count, ph_known_client_count
+    global PH_Q_BLOCKED, PH_Q_TOTAL, PH_Q_PERC, PH_TOP_CLIENT, PH_UPTIME, PH_ACTIVE_DEVICE_COUNT, PH_KNOWN_CLIENT_COUNT
 
     stat_grabber.refresh_pihole_stats()
     pihole_stats = stat_grabber.get_pihole_stats()
 
-    ph_q_blocked  = pihole_stats['ratio'][0]
-    ph_q_total    = pihole_stats['ratio'][1]
-    ph_q_perc     = int(pihole_stats['today_percentage'])/100.0
-    ph_top_client = pihole_stats['topclient'].replace('.lan', '')
-    ph_uptime     = pihole_stats['uptime']
-    ph_active_device_count = pihole_stats['active_device_count']
-    ph_known_client_count = pihole_stats['known_client_count']
+    PH_Q_BLOCKED = pihole_stats['ratio'][0]
+    PH_Q_TOTAL = pihole_stats['ratio'][1]
+    PH_Q_PERC = int(pihole_stats['today_percentage'])/100.0
+    PH_TOP_CLIENT = pihole_stats['topclient'].replace('.lan', '')
+    PH_UPTIME = pihole_stats['uptime']
+    PH_ACTIVE_DEVICE_COUNT = pihole_stats['active_device_count']
+    PH_KNOWN_CLIENT_COUNT = pihole_stats['known_client_count']
 
 def draw_bar_horizontal(origin, size, percentage):
     """ Use draw to draw progress bars within provided dimensions """
@@ -42,32 +42,32 @@ def draw_bar_horizontal(origin, size, percentage):
     norm_percentage = max(min(1, percentage), 0)
 
     # print('Origin: {}    Size: {}'.format(origin, size))
-    x1 = origin[0]
-    y1 = origin[1]
+    x_1 = origin[0]
+    y_1 = origin[1]
 
     width = size[0]
     height = size[1]
 
-    x2 = x1 + width
-    y2 = y1 + height
+    x_2 = x_1 + width
+    y_2 = y_1 + height
 
-    draw.rectangle((x1,
-                    y1,
-                    x2,
-                    y2), fill=255)
+    draw.rectangle((x_1,
+                    y_1,
+                    x_2,
+                    y_2), fill=255)
 
-    draw.rectangle((x1 + border_stroke,
-                    y1 + border_stroke,
-                    x2 - border_stroke,
-                    y2 - border_stroke), fill=0)
+    draw.rectangle((x_1 + border_stroke,
+                    y_1 + border_stroke,
+                    x_2 - border_stroke,
+                    y_2 - border_stroke), fill=0)
 
-    draw.rectangle((x1 + 2 * border_stroke,
-                    y1 + 2 * border_stroke,
-                    x1 + norm_percentage * (width - 2 * border_stroke),
-                    y2 - 2 * border_stroke), fill=255)
+    draw.rectangle((x_1 + 2 * border_stroke,
+                    y_1 + 2 * border_stroke,
+                    x_1 + norm_percentage * (width - 2 * border_stroke),
+                    y_2 - 2 * border_stroke), fill=255)
 
-def get_horizontal_offset(text, font, tick):
-    """ Takes a text, a font and the current frame count (tick) to
+def get_horizontal_offset(text, font, TICK):
+    """ Takes a text, a font and the current frame count (TICK) to
     generate an horizontal scrolling offset """
 
     text_width = draw.textsize(text=text, font=font)[0]
@@ -75,11 +75,11 @@ def get_horizontal_offset(text, font, tick):
         # should scroll
 
         delta = text_width - width
-        step_size = delta / max_fps * 2
+        STEP_SIZE = delta / MAX_FPS * 2
 
-        return (max_fps / 2 - tick) * step_size
-    else:
-        return 0
+        return (MAX_FPS / 2 - TICK) * STEP_SIZE
+
+    return 0
 
 ##
 # Instantiate actors
@@ -111,8 +111,8 @@ draw = ImageDraw.Draw(image)
 draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
 # LED display can render 30fps max
-max_fps = 30
-delay = 1.0/max_fps
+MAX_FPS = 30
+DELAY = 1.0/MAX_FPS
 
 # Move left to right keeping track of the current x position for drawing shapes.
 # TODO: Refactor. Leftover from the initial sample code. Still needed?
@@ -121,80 +121,80 @@ x = 0
 ##
 # Font Configuration
 # Kept for reference
-# small_font = ImageFont.load_default()
+# SMALL_FONT = ImageFont.load_default()
 
-font_path = './fonts/PressStart2P.ttf'
-icon_font_path = './fonts/pixel_dingbats-7.ttf'
+FONT_PATH = './fonts/PressStart2P.ttf'
+ICON_FONT_PATH = './fonts/pixel_dingbats-7.ttf'
 
-font_size = 8
-small_font = ImageFont.truetype(font_path, font_size)
-small_icon_font = ImageFont.truetype(icon_font_path, font_size)
+FONT_SIZE = 8
+SMALL_FONT = ImageFont.truetype(FONT_PATH, FONT_SIZE)
+SMALL_ICON_FONT = ImageFont.truetype(ICON_FONT_PATH, FONT_SIZE)
 
-full_size = 32
-full_size_font = ImageFont.truetype(font_path, full_size)
-full_size_icon_font = ImageFont.truetype(icon_font_path, full_size)
+FULL_SIZE = 32
+FULL_SIZE_FONT = ImageFont.truetype(FONT_PATH, FULL_SIZE)
+FULL_SIZE_ICON_FONT = ImageFont.truetype(ICON_FONT_PATH, FULL_SIZE)
 
-half_size = 16
-half_size_font = ImageFont.truetype(font_path, half_size)
-half_size_icon_font = ImageFont.truetype(icon_font_path, half_size)
+HALF_SIZE = 16
+HALF_SIZE_FONT = ImageFont.truetype(FONT_PATH, HALF_SIZE)
+HALF_SIZE_ICON_FONT = ImageFont.truetype(ICON_FONT_PATH, HALF_SIZE)
 
 
 
 # Config
-swap_threshold    = 10 # time in seconds after which the next screen will be shown
-screen_count      = 4
-progressbar_width = 1
-font_offset       = 0  # some fonts do not align properly
-icon_font_offset  = -4 # some fonts do not align properly
+SWAP_THRESHOLD    = 10 # time in seconds after which the next screen will be shown
+SCREEN_COUNT      = 4
+PROGRESSBAR_WIDTH = 1
+FONT_OFFSET       = 0  # some fonts do not align properly
+ICON_FONT_OFFSET  = -4 # some fonts do not align properly
 
 # Calculated configuration
-step_size = width/max_fps/swap_threshold
+STEP_SIZE = width/MAX_FPS/SWAP_THRESHOLD
 
 ##
 # State 0
-ph_q_blocked  = 0
-ph_q_total    = 0
-ph_q_perc     = 0
-ph_top_client = ''
-ph_uptime     = ''
-ph_active_device_count = ''
-ph_known_client_count = ''
+PH_Q_BLOCKED = 0
+PH_Q_TOTAL = 0
+PH_Q_PERC = 0
+PH_TOP_CLIENT = ''
+PH_UPTIME = ''
+PH_ACTIVE_DEVICE_COUNT = ''
+PH_KNOWN_CLIENT_COUNT = ''
 
 update_pihole_stats()
 
 ##
 # State 1
-time_string   = stat_grabber.get_time()
-weather_line1 = ''
-weather_line2 = ''
-weather_icon  = ''
+TIME_STRING = stat_grabber.get_time()
+WEATHER_LINE_1 = ''
+WEATHER_LINE_2 = ''
+WEATHER_ICON = ''
 
 ##
 # Helper
-last_swap_time = time.time()
-current_state = 0
-tick = 0
+LAST_SWAP_TIME = time.time()
+CURRENT_STATE = 0
+TICK = 0
 while True:
     now = time.time()
-    time_delta = now - last_swap_time
+    time_delta = now - LAST_SWAP_TIME
 
     should_swap = False
-    progress = time_delta / swap_threshold
+    progress = time_delta / SWAP_THRESHOLD
 
-    if time_delta >= swap_threshold:
+    if time_delta >= SWAP_THRESHOLD:
         should_swap = True
-        last_swap_time = now
+        LAST_SWAP_TIME = now
 
     if should_swap:
-        current_state = (current_state + 1) % screen_count
+        CURRENT_STATE = (CURRENT_STATE + 1) % SCREEN_COUNT
 
         ##
         # Put heavy load tasks here. These get executed _once_ when the state is swapped
-        if (current_state == 0):
+        if CURRENT_STATE == 0:
             # pihole stats state
             stat_grabber.refresh_pihole_stats()
 
-        elif (current_state == 1):
+        elif CURRENT_STATE == 1:
             # time state
 
             sun_icon = b'\xC5\xBD'.decode()
@@ -204,88 +204,88 @@ while True:
             snow_icon = b'\x4B'.decode()
             clock_icon = b'\xC3\xAE'.decode()
 
-            time_string = stat_grabber.get_time()
+            TIME_STRING = stat_grabber.get_time()
             weather = stat_grabber.get_weather()
             condition = weather['condition']
             # Round precipitation
             precipitation = round(float(weather['precipitation'][:-2]))
-            weather_line1 = '{} {} {}'.format(condition, weather['temperature'], weather['humidity'])
-            weather_line2 = '{} {}%({}mm)'.format(weather['wind'], weather['probability'], precipitation)
+            WEATHER_LINE_1 = '{} {} {}'.format(condition, weather['temperature'], weather['humidity'])
+            WEATHER_LINE_2 = '{} {}%({}mm)'.format(weather['wind'], weather['probability'], precipitation)
 
-            if ('sun' in condition.lower()):
-                weather_icon = sun_icon
-            elif ('rain' in condition.lower()):
-                weather_icon = rain_icon
-            elif ('cloud' in condition.lower()):
-                weather_icon = cloud_icon
-            elif ('snow' in condition.lower()):
-                weather_icon = snow_icon
+            if 'sun' in condition.lower():
+                WEATHER_ICON = sun_icon
+            elif 'rain' in condition.lower():
+                WEATHER_ICON = rain_icon
+            elif 'cloud' in condition.lower():
+                WEATHER_ICON = cloud_icon
+            elif 'snow' in condition.lower():
+                WEATHER_ICON = snow_icon
             elif ('thunder' in condition.lower()) or ('storm' in condition.lower()):
-                weather_icon = lightning_icon
+                WEATHER_ICON = lightning_icon
             else:
-                weather_icon = clock_icon
+                WEATHER_ICON = clock_icon
 
-        elif (current_state == 2):
+        elif CURRENT_STATE == 2:
             # pihole stats
             update_pihole_stats()
 
     ##
     # House Keeping
-    tick = (tick + 1) % max_fps
+    TICK = (TICK + 1) % MAX_FPS
 
     # Clear Screen
     draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
     # State handling
-    if (current_state == 1):
-        # if (tick % 2 == 0):
-        #     time_string = '{}'.format(time)
+    if CURRENT_STATE == 1:
+        # if (TICK % 2 == 0):
+        #     TIME_STRING = '{}'.format(time)
         # else:
-        #     time_string = '{}'.format(time).replace(':',' ')
+        #     TIME_STRING = '{}'.format(time).replace(':',' ')
 
-        wl1_h_offset = get_horizontal_offset(text=weather_line1, font=small_font, tick=tick)
-        wl2_h_offset = get_horizontal_offset(text=weather_line2, font=small_font, tick=tick)
+        wl1_h_offset = get_horizontal_offset(text=WEATHER_LINE_1, font=SMALL_FONT, TICK=TICK)
+        wl2_h_offset = get_horizontal_offset(text=WEATHER_LINE_2, font=SMALL_FONT, TICK=TICK)
 
-        draw.text((x + 30, font_offset), time_string, font=half_size_font, fill=255)
-        draw.text((x, icon_font_offset), '{}'.format(weather_icon), font=half_size_icon_font, fill=255)
-        draw.text((x + wl1_h_offset, font_offset + half_size), weather_line1, font=small_font, fill=255)
-        draw.text((x + wl2_h_offset, font_offset + half_size + font_size), weather_line2, font=small_font, fill=255)
+        draw.text((x + 30, FONT_OFFSET), TIME_STRING, font=HALF_SIZE_FONT, fill=255)
+        draw.text((x, ICON_FONT_OFFSET), '{}'.format(WEATHER_ICON), font=HALF_SIZE_ICON_FONT, fill=255)
+        draw.text((x + wl1_h_offset, FONT_OFFSET + HALF_SIZE), WEATHER_LINE_1, font=SMALL_FONT, fill=255)
+        draw.text((x + wl2_h_offset, FONT_OFFSET + HALF_SIZE + FONT_SIZE), WEATHER_LINE_2, font=SMALL_FONT, fill=255)
 
-    elif (current_state == 2):
+    elif CURRENT_STATE == 2:
         blocked_today_header_string = 'Blocked today:'
-        blocked_h_offset = get_horizontal_offset(text=blocked_today_header_string, font=small_font, tick=tick)
-        draw.text((x + blocked_h_offset, font_offset), '{}'.format(blocked_today_header_string), font=small_font, fill=255)
+        blocked_h_offset = get_horizontal_offset(text=blocked_today_header_string, font=SMALL_FONT, TICK=TICK)
+        draw.text((x + blocked_h_offset, FONT_OFFSET), '{}'.format(blocked_today_header_string), font=SMALL_FONT, fill=255)
 
-        origin = (0, font_size)
-        size = (width - progressbar_width - 2, half_size - 2)
-        draw_bar_horizontal(origin, size, ph_q_perc)
+        origin = (0, FONT_SIZE)
+        size = (width - PROGRESSBAR_WIDTH - 2, HALF_SIZE - 2)
+        draw_bar_horizontal(origin, size, PH_Q_PERC)
 
-        block_ratio_string = '({}/{}'.format(ph_q_blocked, ph_q_total)
-        block_ratio_h_offset = get_horizontal_offset(text=block_ratio_string, font=small_font, tick=tick)
-        draw.text((x + block_ratio_h_offset, font_offset + half_size + font_size), block_ratio_string, font=small_font, fill=255)
+        block_ratio_string = '({}/{}'.format(PH_Q_BLOCKED, PH_Q_TOTAL)
+        block_ratio_h_offset = get_horizontal_offset(text=block_ratio_string, font=SMALL_FONT, TICK=TICK)
+        draw.text((x + block_ratio_h_offset, FONT_OFFSET + HALF_SIZE + FONT_SIZE), block_ratio_string, font=SMALL_FONT, fill=255)
 
-    elif (current_state == 3):
-        draw.text((x, font_offset), 'Top Client:', font=small_font, fill=255)
-        # draw.text((x, font_offset + font_size), '{0:>15}'.format(ph_top_client), font=half_size_font, fill=255)
-        offset = get_horizontal_offset(text=ph_top_client, font=half_size_font, tick=tick)
-        draw.text((x + offset, font_offset + font_size), '{}'.format(ph_top_client), font=half_size_font, fill=255)
+    elif CURRENT_STATE == 3:
+        draw.text((x, FONT_OFFSET), 'Top Client:', font=SMALL_FONT, fill=255)
+        # draw.text((x, FONT_OFFSET + FONT_SIZE), '{0:>15}'.format(PH_TOP_CLIENT), font=HALF_SIZE_FONT, fill=255)
+        offset = get_horizontal_offset(text=PH_TOP_CLIENT, font=HALF_SIZE_FONT, TICK=TICK)
+        draw.text((x + offset, FONT_OFFSET + FONT_SIZE), '{}'.format(PH_TOP_CLIENT), font=HALF_SIZE_FONT, fill=255)
 
-        draw.text((x, font_offset + half_size + font_size), 'Clients:', font=small_font, fill=255)
-        draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format('{}/{}'.format(ph_active_device_count, ph_known_client_count)), font=small_font, fill=255)
-        # draw.text((x, font_offset + half_size), 'Uptime:', font=small_font, fill=255)
-        # draw.text((x, font_offset + half_size + font_size), '{0:>15}'.format(ph_uptime[:-3]), font=small_font, fill=255)
+        draw.text((x, FONT_OFFSET + HALF_SIZE + FONT_SIZE), 'Clients:', font=SMALL_FONT, fill=255)
+        draw.text((x, FONT_OFFSET + HALF_SIZE + FONT_SIZE), '{0:>15}'.format('{}/{}'.format(PH_ACTIVE_DEVICE_COUNT, PH_KNOWN_CLIENT_COUNT)), font=SMALL_FONT, fill=255)
+        # draw.text((x, FONT_OFFSET + HALF_SIZE), 'Uptime:', font=SMALL_FONT, fill=255)
+        # draw.text((x, FONT_OFFSET + HALF_SIZE + FONT_SIZE), '{0:>15}'.format(PH_UPTIME[:-3]), font=SMALL_FONT, fill=255)
 
     else:
         cpu_percentage = float(stat_grabber.get_cpu_load())/100.0
         ram_percentage = float(stat_grabber.get_memory_percentage())/100.0 # cut off percentage sign
 
-        draw.text((x, font_offset), 'CPU: ', font=half_size_font, fill=255)
-        draw.text((x, font_offset + half_size), 'RAM: ', font=half_size_font, fill=255)
+        draw.text((x, FONT_OFFSET), 'CPU: ', font=HALF_SIZE_FONT, fill=255)
+        draw.text((x, FONT_OFFSET + HALF_SIZE), 'RAM: ', font=HALF_SIZE_FONT, fill=255)
 
         cpu_bar_origin = (width/2, 1)
-        ram_bar_origin = (width/2, half_size + 1)
+        ram_bar_origin = (width/2, HALF_SIZE + 1)
 
-        bar_size = (width/2 - progressbar_width - 2, half_size-2)
+        bar_size = (width/2 - PROGRESSBAR_WIDTH - 2, HALF_SIZE-2)
 
         draw_bar_horizontal(cpu_bar_origin, bar_size, cpu_percentage)
         draw_bar_horizontal(ram_bar_origin, bar_size, ram_percentage)
@@ -294,11 +294,11 @@ while True:
     # Draw State Progress
     size = width*progress
     v_size = height*progress
-    # draw.rectangle((0, 0, size, progressbar_width), outline=1, fill=255)
-    # draw.rectangle((0, height-progressbar_width, size, height), outline=1, fill=255)
-    draw.rectangle((width-progressbar_width, height-v_size, width, height), outline=1, fill=255)
+    # draw.rectangle((0, 0, size, PROGRESSBAR_WIDTH), outline=1, fill=255)
+    # draw.rectangle((0, height-PROGRESSBAR_WIDTH, size, height), outline=1, fill=255)
+    draw.rectangle((width-PROGRESSBAR_WIDTH, height-v_size, width, height), outline=1, fill=255)
 
     # Display image.
     disp.image(image)
     disp.show()
-    time.sleep(delay)
+    time.sleep(DELAY)
