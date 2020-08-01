@@ -16,7 +16,7 @@ cd $DIR
 
 git stash
 
-if [ -f "$DIR/.develop"]; then
+if [ -f "$DIR/.develop" ]; then
     # use develop version instead of master
     git checkout develop
     git pull origin develop
