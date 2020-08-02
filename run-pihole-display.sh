@@ -15,10 +15,20 @@ cd $DIR
 # git reset --hard origin/master
 
 git stash
-git pull origin master
+
+if [ -f "$DIR/.develop" ]; then
+    # use develop version instead of master
+    git checkout develop
+    git pull origin develop
+else
+    # use release version
+    git checkout master
+    git pull origin master
+fi
+
 
 # Run display software in background
-python3 "$DIR/led_display.py" >> "../pihole-display.log" &
+python3 "$DIR/src/led_display.py" >> "../pihole-display.log" &
 
 ##
 # Updating blocklists on the raspberry pi zero may take up to

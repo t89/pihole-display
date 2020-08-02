@@ -36,8 +36,14 @@ class StatGrabber():
         # ip -s -s neigh flush all
         # A different solution is probably the way to go
         cmd = "sudo arp -a | wc -l"
-        active_device_count = subprocess.check_output(cmd, shell=True).decode(self.encoding)
-        active_device_count = str(int(active_device_count)-1) # :3
+        active_device_count_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
+
+        try:
+            active_device_count = int(active_device_count_string)-1
+
+        except ValueError:
+            active_device_count = 0
+
         self.stats['active_device_count'] = active_device_count
         return active_device_count
 
@@ -48,9 +54,10 @@ class StatGrabber():
         return psutil.virtual_memory().percent
 
     def get_memory_ratio(self):
+        # REFACTOR: Rename since ratio implies factor
         mem_dict = dict(psutil.virtual_memory()._asdict())
         used = mem_dict['used']/1024/1024        # used memory in MB
-        total = mem_dict['total']/1024/1024      # used memory in MB
+        total = mem_dict['total']/1024/1024      # total memory in MB
         return (round(used, 1), round(total, 1)) # tuple rounded to first decimal
 
     def get_disk_space(self):
@@ -101,54 +108,44 @@ class StatGrabber():
         return self.stats
 
     def get_weather(self):
-        # every half-hour
-        if (time.time() - self.last_weather_check >= 300):
+        # every 5 minutes
+        if time.time() - self.last_weather_check >= 300:
             self.load_weather()
 
         return self.weather
 
-    def load_weather(self):
-        self.last_weather_check = time.time()
+    def load_weather_for_location(self, location):
+        # c    Weather condition,
+        # C    Weather condition textual name,
+        # h    Humidity,
+        # t    Temperature (Actual),
+        # f    Temperature (Feels Like),
+        # w    Wind,
+        # l    Location,
+        # m    Moonphase 🌑🌒🌓🌔🌕🌖🌗🌘,
+        # M    Moonday,
+        # p    precipitation (mm),
+        # o    Probability of Precipitation,
+        # P    pressure (hPa),
 
-        location = ""
-        with open('./location', 'r', encoding='utf-8') as location_file:
-            ##
-            # TODO: Fix this sh*t u lzy bstrd
-            for line in location_file:
-                location = line.replace('\n', '').replace(' ', '+')
-                break
-
-            # c    Weather condition,
-            # C    Weather condition textual name,
-            # h    Humidity,
-            # t    Temperature (Actual),
-            # f    Temperature (Feels Like),
-            # w    Wind,
-            # l    Location,
-            # m    Moonphase 🌑🌒🌓🌔🌕🌖🌗🌘,
-            # M    Moonday,
-            # p    precipitation (mm),
-            # o    Probability of Precipitation,
-            # P    pressure (hPa),
-
-            # D    Dawn*,
-            # S    Sunrise*,
-            # z    Zenith*,
-            # s    Sunset*,
-            # d    Dusk*.
+        # D    Dawn*,
+        # S    Sunrise*,
+        # z    Zenith*,
+        # s    Sunset*,
+        # d    Dusk*.
 
         weather_format_string = '%l,%C,%t,%h,%w,%p,%o,%P'
         url = 'https://wttr.in/{}?format="{}"'.format(location, weather_format_string)
 
 
         weather = {'status' : 'success',
-                   'location' : '',
-                   'condition' : '',
-                   'temperature' : '0',
-                   'humidity' : '0',
-                   'wind' : '0',
-                   'precipitation' : '0',
-                   'probability' : '0'}
+                    'location' : '',
+                    'condition' : '',
+                    'temperature' : '0',
+                    'humidity' : '0',
+                    'wind' : '0',
+                    'precipitation' : '0',
+                    'probability' : '0'}
 
         try:
             response = requests.get(url)
@@ -165,9 +162,9 @@ class StatGrabber():
             raw_weather_list = weather_string.split(',')
 
             rwl_count = len(raw_weather_list)
-            if (rwl_count == 0):
+            if rwl_count == 0:
                 weather['status'] = 'empty'
-            elif (rwl_count <= 2):
+            elif rwl_count <= 2:
                 ##
                 # If an error happens it is the only response available
                 # e.g.: ['Unknown location; please try ~49.187089', '-97.937622\n']
@@ -182,60 +179,78 @@ class StatGrabber():
                         'probability' : raw_weather_list[6].replace('\n','')}
 
             # If value is empty string, replace with zero-string instead
-            if (weather['temperature'] is ''):
+            if weather['temperature'] == '':
                 weather['temperature'] = '0'
 
-            if (weather['humidity'] is ''):
+            if weather['humidity'] == '':
                 weather['humidity'] = '0'
 
-            if (weather['wind'] is ''):
+            if weather['wind'] == '':
                 weather['wind'] = '0'
 
-            if (weather['probability'] is ''):
+            if weather['probability'] == '':
                 weather['probability'] = '0'
 
-            if (weather['precipitation'] is ''):
+            if weather['precipitation'] == '':
                 weather['precipitation'] = '0'
 
+            weather['wind'] = self.replace_arrows_in_string(weather['wind'])
+
+            self.weather = weather
+
+    def load_weather(self):
+        self.last_weather_check = time.time()
+
+        location = ""
+        with open('./location', 'r', encoding='utf-8') as location_file:
             ##
-            # Fix missing arrow chars in font PressStart2P
-            default_leftwards_arrow = b'\xE2\x86\x90'.decode()
-            default_upwards_arrow = b'\xE2\x86\x91'.decode()
-            default_downwards_arrow = b'\xE2\x86\x93'.decode()
-            default_rightwards_arrow = b'\xE2\x86\x92'.decode()
-            default_northwest_arrow = b'\xE2\x86\x96'.decode()
-            default_northeast_arrow = b'\xE2\x86\x97'.decode()
-            default_southwest_arrow = b'\xE2\x86\x99'.decode()
-            default_southeast_arrow = b'\xE2\x86\x98'.decode()
+            # TODO: Fix this sh*t u lzy bstrd
+            for line in location_file:
+                location = line.replace('\n', '').replace(' ', '+')
+                break
 
-            fixed_leftwards_arrow = b'\xE2\x86\x90'.decode()
-            fixed_upwards_arrow = b'\xE2\x86\x91'.decode()
-            fixed_downwards_arrow = b'\xE2\x86\x93'.decode()
-            fixed_rightwards_arrow = b'\xE2\x86\x92'.decode()
-            fixed_northwest_arrow = b'\xE2\x86\x91\xE2\x86\x90'.decode()
-            fixed_northeast_arrow = b'\xE2\x86\x91\xE2\x86\x92'.decode()
-            fixed_southwest_arrow = b'\xE2\x86\x93\xE2\x86\x90'.decode()
-            fixed_southeast_arrow = b'\xE2\x86\x93\xE2\x86\x92'.decode()
+        self.load_weather_for_location(location)
 
-            default_arrows = [default_leftwards_arrow,
-                            default_upwards_arrow,
-                            default_downwards_arrow,
-                            default_rightwards_arrow,
-                            default_northwest_arrow,
-                            default_northeast_arrow,
-                            default_southwest_arrow,
-                            default_southeast_arrow]
+    def replace_arrows_in_string(self, s):
+        """ Fix missing arrow chars from weather service in font PressStart2P """
 
-            fixed_arrows = [fixed_leftwards_arrow,
-                            fixed_upwards_arrow,
-                            fixed_downwards_arrow,
-                            fixed_rightwards_arrow,
-                            fixed_northwest_arrow,
-                            fixed_northeast_arrow,
-                            fixed_southwest_arrow,
-                            fixed_southeast_arrow]
+        default_leftwards_arrow = b'\xE2\x86\x90'.decode()
+        default_upwards_arrow = b'\xE2\x86\x91'.decode()
+        default_downwards_arrow = b'\xE2\x86\x93'.decode()
+        default_rightwards_arrow = b'\xE2\x86\x92'.decode()
+        default_northwest_arrow = b'\xE2\x86\x96'.decode()
+        default_northeast_arrow = b'\xE2\x86\x97'.decode()
+        default_southwest_arrow = b'\xE2\x86\x99'.decode()
+        default_southeast_arrow = b'\xE2\x86\x98'.decode()
 
-            for idx, _ in enumerate(default_arrows):
-                weather['wind'] = weather['wind'].replace(default_arrows[idx], fixed_arrows[idx])
+        fixed_leftwards_arrow = b'\xE2\x86\x90'.decode()
+        fixed_upwards_arrow = b'\xE2\x86\x91'.decode()
+        fixed_downwards_arrow = b'\xE2\x86\x93'.decode()
+        fixed_rightwards_arrow = b'\xE2\x86\x92'.decode()
+        fixed_northwest_arrow = b'\xE2\x86\x91\xE2\x86\x90'.decode()
+        fixed_northeast_arrow = b'\xE2\x86\x91\xE2\x86\x92'.decode()
+        fixed_southwest_arrow = b'\xE2\x86\x93\xE2\x86\x90'.decode()
+        fixed_southeast_arrow = b'\xE2\x86\x93\xE2\x86\x92'.decode()
 
-        self.weather = weather
+        default_arrows = [default_leftwards_arrow,
+                          default_upwards_arrow,
+                          default_downwards_arrow,
+                          default_rightwards_arrow,
+                          default_northwest_arrow,
+                          default_northeast_arrow,
+                          default_southwest_arrow,
+                          default_southeast_arrow]
+
+        fixed_arrows = [fixed_leftwards_arrow,
+                        fixed_upwards_arrow,
+                        fixed_downwards_arrow,
+                        fixed_rightwards_arrow,
+                        fixed_northwest_arrow,
+                        fixed_northeast_arrow,
+                        fixed_southwest_arrow,
+                        fixed_southeast_arrow]
+
+        for idx, _ in enumerate(default_arrows):
+            s = s.replace(default_arrows[idx], fixed_arrows[idx])
+
+        return s

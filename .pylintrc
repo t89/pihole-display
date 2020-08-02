@@ -1,0 +1,10 @@
+[MASTER]
+disable=
+    C0114, # missing-module-docstring
+    C0301, # line-too-long (>80)
+
+[DEVELOP]
+disable=
+    C0114, # missing-module-docstring
+    C0301, # line-too-long (>80)
+

@@ -1,0 +1,33 @@
+image: "python:3.8.5-slim-buster"
+
+#commands to run in the Docker container before starting each job.
+before_script:
+  - python --version
+  - apt-get update
+  - apt-get install -y gcc python3-dev
+  - pip install -r requirements.txt
+
+# different stages in the pipeline
+stages:
+  - Test
+
+#defines the job in Static Analysis
+static-analysis:
+  stage: Test
+  script:
+    # -(d)isable warning type C0301: Line too long
+  # - pylint -d C0301 src/*.py
+  # .pylintrc handles disables
+  - pylint src/*.py
+  tags:
+    - shared
+
+test:
+  stage: Test
+  script:
+    - pytest
+  tags:
+    - shared
+  # artifacts:
+  #   paths:
+  #     - coverage
