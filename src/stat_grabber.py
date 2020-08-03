@@ -202,7 +202,7 @@ class StatGrabber():
         self.last_weather_check = time.time()
 
         location = ""
-        with open('./location', 'r', encoding='utf-8') as location_file:
+        with open('../location', 'r', encoding='utf-8') as location_file:
             ##
             # TODO: Fix this sh*t u lzy bstrd
             for line in location_file:
