@@ -258,7 +258,7 @@ class StatGrabber():
 
         ##
         # REFACTOR
-        HARD_CODED_BASE_PATH = '/home/pi/pihole-display/'
+        HARD_CODED_BASE_PATH = '/home/pi/pihole-display'
         location = ""
         with open('{}/location'.format(HARD_CODED_BASE_PATH), 'r', encoding='utf-8') as location_file:
             ##

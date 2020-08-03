@@ -125,7 +125,7 @@ x = 0
 
 ##
 # REFACTOR
-HARD_CODED_BASE_PATH = '/home/pi/pihole-display/'
+HARD_CODED_BASE_PATH = '/home/pi/pihole-display'
 
 FONT_PATH = '{}/fonts/PressStart2P.ttf'.format(HARD_CODED_BASE_PATH)
 ICON_FONT_PATH = '{}/fonts/pixel_dingbats-7.ttf'.format(HARD_CODED_BASE_PATH)
