@@ -123,8 +123,8 @@ x = 0
 # Kept for reference
 # SMALL_FONT = ImageFont.load_default()
 
-FONT_PATH = './fonts/PressStart2P.ttf'
-ICON_FONT_PATH = './fonts/pixel_dingbats-7.ttf'
+FONT_PATH = '../fonts/PressStart2P.ttf'
+ICON_FONT_PATH = '../fonts/pixel_dingbats-7.ttf'
 
 FONT_SIZE = 8
 SMALL_FONT = ImageFont.truetype(FONT_PATH, FONT_SIZE)
