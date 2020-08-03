@@ -123,8 +123,12 @@ x = 0
 # Kept for reference
 # SMALL_FONT = ImageFont.load_default()
 
-FONT_PATH = '../fonts/PressStart2P.ttf'
-ICON_FONT_PATH = '../fonts/pixel_dingbats-7.ttf'
+##
+# REFACTOR
+HARD_CODED_BASE_PATH = '/home/pi/pihole-display/'
+
+FONT_PATH = '{}/fonts/PressStart2P.ttf'.format(HARD_CODED_BASE_PATH)
+ICON_FONT_PATH = '{}/fonts/pixel_dingbats-7.ttf'.format(HARD_CODED_BASE_PATH)
 
 FONT_SIZE = 8
 SMALL_FONT = ImageFont.truetype(FONT_PATH, FONT_SIZE)

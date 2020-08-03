@@ -256,8 +256,11 @@ class StatGrabber():
     def load_weather(self):
         self.last_weather_check = time.time()
 
+        ##
+        # REFACTOR
+        HARD_CODED_BASE_PATH = '/home/pi/pihole-display/'
         location = ""
-        with open('../location', 'r', encoding='utf-8') as location_file:
+        with open('{}/location'.format(HARD_CODED_BASE_PATH), 'r', encoding='utf-8') as location_file:
             ##
             # TODO: Fix this sh*t u lzy bstrd
             for line in location_file:
