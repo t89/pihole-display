@@ -235,19 +235,19 @@ class StatGrabber():
 
             # If value is empty string, replace with zero-string instead
             if weather['temperature'] == '':
-                weather['temperature'] = '0'
+                weather['temperature'] = '-'
 
             if weather['humidity'] == '':
-                weather['humidity'] = '0'
+                weather['humidity'] = '-'
 
             if weather['wind'] == '':
-                weather['wind'] = '0'
+                weather['wind'] = '-'
 
             if weather['probability'] == '':
-                weather['probability'] = '0'
+                weather['probability'] = '-'
 
             if weather['precipitation'] == '':
-                weather['precipitation'] = '0'
+                weather['precipitation'] = '-'
 
             weather['wind'] = self.replace_arrows_in_string(weather['wind'])
 
