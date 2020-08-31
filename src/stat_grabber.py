@@ -189,18 +189,18 @@ class StatGrabber():
         # s    Sunset*,
         # d    Dusk*.
 
-        weather_format_string = '%l,%C,%t,%h,%w,%p,%o,%P'
+        weather_format_string = '%l,%t,%h,%w,%p,%o,%P,%C'
         url = 'https://wttr.in/{}?format="{}"'.format(location, weather_format_string)
 
-
-        weather = {'status' : 'success',
-                    'location' : '',
-                    'condition' : '',
-                    'temperature' : '0',
-                    'humidity' : '0',
-                    'wind' : '0',
-                    'precipitation' : '0',
-                    'probability' : '0'}
+        weather = {'status': 'success',
+                   'location': '',
+                   'temperature': '0',
+                   'humidity': '0',
+                   'wind': '0',
+                   'precipitation': '0',
+                   'probability': '0',
+                   'pressure': '0',
+                   'condition': ''}
 
         try:
             response = requests.get(url)
@@ -225,15 +225,29 @@ class StatGrabber():
                 # e.g.: ['Unknown location; please try ~49.187089', '-97.937622\n']
                 weather['status'] = ' '.join(raw_weather_list).replace('\n', '')
             else:
-                weather = {'location' : raw_weather_list[0],
-                        'condition' : raw_weather_list[1],
-                        'temperature' : raw_weather_list[2],
-                        'humidity' : raw_weather_list[3],
-                        'wind' : raw_weather_list[4],
-                        'precipitation' : raw_weather_list[5],
-                        'probability' : raw_weather_list[6].replace('\n','')}
+                weather = {'location': raw_weather_list[0],
+                           'temperature': raw_weather_list[1],
+                           'humidity': raw_weather_list[2],
+                           'wind': raw_weather_list[3],
+                           'precipitation': raw_weather_list[4],
+                           'probability': raw_weather_list[5],
+                           'pressure': raw_weather_list[6]}
+
+                ##
+                # Usually condition returns one value like "rain", "cloudy", "sunny".
+                # There are special cases how ever, eg.: "Thunderstorm in vicinity, rain".
+                # Notice the comma! That's why condition was moved to the last spot and
+                # is handled separately in the following lines
+
+                weather['condition'] = raw_weather_list[-1].replace('\n','')
+
+                if len(raw_weather_list) > 8:
+                    weather['condition'] = '{} ({})'.format(weather['condition'], raw_weather_list[-1])
 
             # If value is empty string, replace with zero-string instead
+            if weather['location'] == '':
+                weather['location'] = '-'
+
             if weather['temperature'] == '':
                 weather['temperature'] = '-'
 
@@ -243,11 +257,17 @@ class StatGrabber():
             if weather['wind'] == '':
                 weather['wind'] = '-'
 
+            if weather['precipitation'] == '':
+                weather['precipitation'] = '-'
+
             if weather['probability'] == '':
                 weather['probability'] = '-'
 
-            if weather['precipitation'] == '':
-                weather['precipitation'] = '-'
+            if weather['pressure'] == '':
+                weather['pressure'] = '-'
+
+            if weather['condition'] == '':
+                weather['condition'] = '-'
 
             weather['wind'] = self.replace_arrows_in_string(weather['wind'])
 
