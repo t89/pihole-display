@@ -209,7 +209,7 @@ class StatGrabber():
             weather_string = response.text
 
             # get rid of surrounding "
-            weather_string.replace('"', '')
+            weather_string = weather_string.replace('"', '')
         except subprocess.CalledProcessError as e:
             print(e)
             weather['status'] = str(e)
