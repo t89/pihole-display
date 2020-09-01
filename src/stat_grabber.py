@@ -207,6 +207,9 @@ class StatGrabber():
             ##
             # Note to myself: response.text is not a function, while response.json() is
             weather_string = response.text
+
+            # get rid of surrounding "
+            weather_string.replace('"', '')
         except subprocess.CalledProcessError as e:
             print(e)
             weather['status'] = str(e)
