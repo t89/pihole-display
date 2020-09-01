@@ -213,8 +213,9 @@ while True:
             condition = weather['condition']
             # Round precipitation
             precipitation = round(float(weather['precipitation'][:-2]))
+            probability = '' if (weather['probability'] == '-') else '{}% '.format(weather['probability'])
             WEATHER_LINE_1 = '{} {} {}'.format(condition, weather['temperature'], weather['humidity'])
-            WEATHER_LINE_2 = '{} {}%({}mm)'.format(weather['wind'], weather['probability'], precipitation)
+            WEATHER_LINE_2 = '{} {}{}mm'.format(weather['wind'], probability, precipitation)
 
             if 'sun' in condition.lower():
                 WEATHER_ICON = sun_icon
