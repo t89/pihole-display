@@ -71,13 +71,15 @@ def get_horizontal_offset(text, font, TICK):
     generate an horizontal scrolling offset """
 
     text_width = draw.textsize(text=text, font=font)[0]
-    if (text_width > width):
+    if (text_width > width - 3):
         # should scroll
 
         delta = text_width - width
-        STEP_SIZE = delta / MAX_FPS * 2
+        STEP_SIZE = delta / MAX_FPS
 
-        return (MAX_FPS / 2 - TICK) * STEP_SIZE
+        half_fps = MAX_FPS / 2
+        # return (half_fps - TICK) * STEP_SIZE - half_fps
+        return -TICK * STEP_SIZE
 
     return 0
 
