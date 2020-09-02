@@ -16,6 +16,7 @@ from board import SCL, SDA
 import busio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
+import os.path
 
 from stat_grabber import StatGrabber
 
@@ -83,6 +84,9 @@ def get_horizontal_offset(text, font, TICK):
 
     return 0
 
+def load_icon_with_name(name):
+    img = Image.open(os.path.join('icons', name), mode='r').resize((height, height)).convert('1')
+    return img
 ##
 # Instantiate actors
 # Create the I2C interface.
