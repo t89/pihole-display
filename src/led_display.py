@@ -151,11 +151,11 @@ HALF_SIZE_ICON_FONT = ImageFont.truetype(ICON_FONT_PATH, HALF_SIZE)
 
 
 # Config
-SWAP_THRESHOLD    = 10 # time in seconds after which the next screen will be shown
-SCREEN_COUNT      = 4
+SWAP_THRESHOLD = 10 # time in seconds after which the next screen will be shown
+SCREEN_COUNT = 4
 PROGRESSBAR_WIDTH = 1
-FONT_OFFSET       = 0  # some fonts do not align properly
-ICON_FONT_OFFSET  = -4 # some fonts do not align properly
+FONT_OFFSET = 0  # some fonts do not align properly
+ICON_FONT_OFFSET = -4 # some fonts do not align properly
 
 # Calculated configuration
 STEP_SIZE = width/MAX_FPS/SWAP_THRESHOLD
