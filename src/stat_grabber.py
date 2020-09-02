@@ -11,6 +11,7 @@ import time
 import subprocess
 import requests
 import psutil
+import json
 
 from datetime import datetime
 
@@ -170,111 +171,48 @@ class StatGrabber():
         return self.weather
 
     def load_weather_for_location(self, location):
-        # c    Weather condition,
-        # C    Weather condition textual name,
-        # h    Humidity,
-        # t    Temperature (Actual),
-        # f    Temperature (Feels Like),
-        # w    Wind,
-        # l    Location,
-        # m    Moonphase 🌑🌒🌓🌔🌕🌖🌗🌘,
-        # M    Moonday,
-        # p    precipitation (mm),
-        # o    Probability of Precipitation,
-        # P    pressure (hPa),
+        """ Loads complete weather data as json input """
 
-        # D    Dawn*,
-        # S    Sunrise*,
-        # z    Zenith*,
-        # s    Sunset*,
-        # d    Dusk*.
-
-        weather_format_string = '%l,%t,%h,%w,%p,%o,%P,%C'
-        url = 'https://wttr.in/{}?format="{}"'.format(location, weather_format_string)
-
-        weather = {'status': 'success',
-                   'location': '',
-                   'temperature': '0',
-                   'humidity': '0',
-                   'wind': '0',
-                   'precipitation': '0',
-                   'probability': '0',
-                   'pressure': '0',
-                   'condition': ''}
+        url = 'https://wttr.in/{}?format={}'.format(location, 'j1')
 
         try:
             response = requests.get(url)
             ##
             # Note to myself: response.text is not a function, while response.json() is
-            weather_string = response.text
+            complete_weather_dict = response.json()
+            current_condition = complete_weather_dict['current_condition']
+            # nearest_area = complete_weather_dict['nearest_area']
+            # request =  complete_weather_dict['request']
 
-            # get rid of surrounding "
-            weather_string = weather_string.replace('"', '')
-        except subprocess.CalledProcessError as e:
-            print(e)
-            weather['status'] = str(e)
+            # weather =  complete_weather_dict['weather']
+            # hourly = weather[0]['hourly']
 
-        else:
-            # in case of no-exception
+            ##
+            # current_condition
+            # 'FeelsLikeC': '19',
+            # 'FeelsLikeF': '66',
+            # 'cloudcover': '0',
+            # 'humidity': '100',
+            # 'localObsDateTime': '2020-09-01 08:47 PM',
+            # 'observation_time': '01:47 AM',
+            # 'precipMM': '1.2',
+            # 'pressure': '998',
+            # 'temp_C': '19',
+            # 'temp_F': '66',
+            # 'uvIndex': '4',
+            # 'visibility': '16',
+            # 'weatherCode': '113',
+            # 'weatherDesc': [{'value': 'Sunny'}],
+            # 'weatherIconUrl': [{'value': ''}],
+            # 'winddir16Point': 'W',
+            # 'winddirDegree': '280',
+            # 'windspeedKmph': '17',
+            # 'windspeedMiles': '11'
 
-            raw_weather_list = weather_string.split(',')
-
-            rwl_count = len(raw_weather_list)
-            if rwl_count == 0:
-                weather['status'] = 'empty'
-            elif rwl_count <= 2:
-                ##
-                # If an error happens it is the only response available
-                # e.g.: ['Unknown location; please try ~49.187089', '-97.937622\n']
-                weather['status'] = ' '.join(raw_weather_list).replace('\n', '')
-            else:
-                weather = {'location': raw_weather_list[0],
-                           'temperature': raw_weather_list[1],
-                           'humidity': raw_weather_list[2],
-                           'wind': raw_weather_list[3],
-                           'precipitation': raw_weather_list[4],
-                           'probability': raw_weather_list[5],
-                           'pressure': raw_weather_list[6]}
-
-                ##
-                # Usually condition returns one value like "rain", "cloudy", "sunny".
-                # There are special cases how ever, eg.: "Thunderstorm in vicinity, rain".
-                # Notice the comma! That's why condition was moved to the last spot and
-                # is handled separately in the following lines
-
-                weather['condition'] = raw_weather_list[-1].replace('\n','')
-
-                if len(raw_weather_list) > 8:
-                    weather['condition'] = '{} ({})'.format(weather['condition'], raw_weather_list[-1])
-
-            # If value is empty string, replace with zero-string instead
-            if weather['location'] == '':
-                weather['location'] = '-'
-
-            if weather['temperature'] == '':
-                weather['temperature'] = '-'
-
-            if weather['humidity'] == '':
-                weather['humidity'] = '-'
-
-            if weather['wind'] == '':
-                weather['wind'] = '-'
-
-            if weather['precipitation'] == '':
-                weather['precipitation'] = '-'
-
-            if weather['probability'] == '':
-                weather['probability'] = '-'
-
-            if weather['pressure'] == '':
-                weather['pressure'] = '-'
-
-            if weather['condition'] == '':
-                weather['condition'] = '-'
-
-            weather['wind'] = self.replace_arrows_in_string(weather['wind'])
-
-            self.weather = weather
+            self.weather = current_condition[0]
+        except subprocess.CalledProcessError as exc:
+            print(exc)
+            self.weather['status'] = str(exc)
 
     def load_weather(self):
         self.last_weather_check = time.time()

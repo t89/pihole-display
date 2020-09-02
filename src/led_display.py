@@ -216,12 +216,15 @@ while True:
 
             TIME_STRING = stat_grabber.get_time()
             weather = stat_grabber.get_weather()
-            condition = weather['condition']
+
+            condition = weather['weatherDesc'][0]['value']
             # Round precipitation
-            precipitation = round(float(weather['precipitation'][:-2]))
-            probability = '' if (weather['probability'] == '-') else '{}% '.format(weather['probability'])
-            WEATHER_LINE_1 = '{} {} {}'.format(condition, weather['temperature'], weather['humidity'])
-            WEATHER_LINE_2 = '{} {}{}mm'.format(weather['wind'], probability, precipitation)
+            precipitation = round(float(weather['precipMM'][:-2]))
+            wind = '{} {}km/h'.format(weather['winddir16Point'], weather['windspeedKmph'])
+            pressure = '{}hPa'.format(weather['pressure'])
+            # probability = '' if (weather['probability'] == '-') else '{}% '.format(weather['probability'])
+            WEATHER_LINE_1 = '{} {}°C RH:{}%'.format(condition, weather['temp_C'], weather['humidity'])
+            WEATHER_LINE_2 = '{} {}mm'.format(wind, precipitation)
 
             if 'sun' in condition.lower():
                 WEATHER_ICON = sun_icon
