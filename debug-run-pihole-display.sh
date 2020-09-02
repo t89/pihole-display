@@ -10,11 +10,6 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
 cd $DIR
 
-##
-# TEMPORARY:
-# Fix FTL Bug: https://github.com/pi-hole/PADD/issues/112#issuecomment-659540269
-echo "4711" | sudo tee /var/run/pihole-FTL.port
-
 # Run display software in background
 python3 "$DIR/src/led_display.py"
 
