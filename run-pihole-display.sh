@@ -14,6 +14,15 @@ cd $DIR
 # git fetch --all
 # git reset --hard origin/master
 
+while : ; do
+    # Check if we are connected to the internet
+    # Connection status is set to 0 ONLY if ping was successful
+    connection_status=$(ping -c 1 -q google.com >&/dev/null; echo $?)
+    [[ $connection_status -eq 0 ]] || break
+    sudo bash "./utility/wps_config.sh"
+    sleep 30
+done
+
 git stash
 
 if [ -f "$DIR/.develop" ]; then
