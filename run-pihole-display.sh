@@ -17,10 +17,21 @@ cd $DIR
 while : ; do
     # Check if we are connected to the internet
     # Connection status is set to 0 ONLY if ping was successful
+    echo "Checking connection"
     connection_status=$(ping -c 1 -q google.com >&/dev/null; echo $?)
-    [[ $connection_status -eq 0 ]] || break
+    echo "Status (should be 0): $connection_status"
+
+    # Break endless loop if connection is found
+    if [ $connection_status -eq 0 ]; then
+        echo "Connection found"
+        break
+    fi
+
+    echo "No connection found, initializing WPS"
     sudo bash "./utility/wps_config.sh"
-    sleep 30
+
+    echo "15 seconds pause before rechecking"
+    sleep 15
 done
 
 git stash
