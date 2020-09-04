@@ -57,14 +57,6 @@ if [ "$(LANG=C && /sbin/ifconfig wlan0 | grep 'HWaddr\|ether' | wc -l)" -gt "0" 
         wpa_action wlan0 reload
         /sbin/ifup wlan0
 
-        # Activate Auto-Reconnect on Loosing Connection
-        autoreconnect_wifi=$(cat /opt/max2play/options.conf | grep autoreconnect_wifi | wc -l)
-        if [ "1" -gt "$autoreconnect_wifi" ]; then
-            echo "autoreconnect_wifi=1" >> /opt/max2play/options.conf
-        else
-            sed -i 's/autoreconnect_wifi.*/autoreconnect_wifi=1/' /opt/max2play/options.conf
-        fi
-
     else
         echo "ERROR creating connection"
         echo $SUCCESS
