@@ -11,16 +11,16 @@ if [ "$(LANG=C && /sbin/ifconfig wlan0 | grep 'HWaddr\|ether' | wc -l)" -gt "0" 
     killall -q wpa_supplicant
     sleep 1
     # Check if "update_config=1" needed in /opt/max2play/wpa_supplicant.conf for Autoconfig
-    if [ "$(grep -i "update_config=1" /opt/max2play/wpa_supplicant.conf | wc -l)" -lt "1" ]; then
-        echo "update_config=1" >> /opt/max2play/wpa_supplicant.conf
+    if [ "$(grep -i "update_config=1" /etc/wpa_supplicant/wpa_supplicant.conf | wc -l)" -lt "1" ]; then
+        echo "update_config=1" >> /etc/wpa_supplicant/wpa_supplicant.conf
     fi
 
     # Make sure WPA-Supplicant is running with config
     # separate RPI3 no wext Driver for WPS!
     if [ "0" -lt "$(wpa_supplicant -h | grep nl80211 | wc -l)" ]; then
-        wpa_supplicant -B w -i wlan0 -c /opt/max2play/wpa_supplicant.conf
+        wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
     else
-        wpa_supplicant -B w -D wext -i wlan0 -c /opt/max2play/wpa_supplicant.conf
+        wpa_supplicant -B w -D wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
     fi
     sleep 3
 
@@ -35,10 +35,10 @@ if [ "$(LANG=C && /sbin/ifconfig wlan0 | grep 'HWaddr\|ether' | wc -l)" -gt "0" 
     sleep 10
 
     # Check for Entry in wpa_supplicant.conf
-    VALIDENTRY=$(grep -i "^network=" /opt/max2play/wpa_supplicant.conf | wc -l)
+    VALIDENTRY=$(grep -i "^network=" /etc/wpa_supplicant/wpa_supplicant.conf | wc -l)
 
     # wpa_supplicant.conf should be modified in last 20 seconds by WPS Config
-    MODIFIED=$(( `date +%s` - `stat -L --format %Y /opt/max2play/wpa_supplicant.conf` ))
+    MODIFIED=$(( `date +%s` - `stat -L --format %Y /etc/wpa_supplicant/wpa_supplicant.conf` ))
 
     if [ "$(echo "$SUCCESS" | grep 'OK' | wc -l)" -gt "0" -a "$VALIDENTRY" -gt "0" -a "$MODIFIED" -lt "20" ]; then
         # Now Config File should be written
