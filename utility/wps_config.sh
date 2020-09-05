@@ -47,15 +47,9 @@ if [ "$(LANG=C && /sbin/ifconfig wlan0 | grep 'HWaddr\|ether' | wc -l)" -gt "0" 
         killall -q wpa_supplicant
         sleep 3
 
-        # Enable wlan0 in /etc/network/interfaces
-        if [ "$(grep -i '^auto wlan0' /etc/network/interfaces | wc -l)" -lt "1" ]; then
-            sed -i "s/#allow-hotplug wlan0/allow-hotplug wlan0/;s/#iface wlan0 inet dhcp/iface wlan0 inet dhcp/;s/#auto wlan0/auto wlan0/;s/#pre-up wpa_supplicant/pre-up wpa_supplicant/;s/#post-down killall -q wpa_supplicant/post-down killall -q wpa_supplicant/" /etc/network/interfaces
-        fi
-
-        # Startup wlan0 with new Config
-        wpa_action wlan0 stop
-        wpa_action wlan0 reload
-        /sbin/ifup wlan0
+        # restart wlan0 interface
+        sudo ip link set wlan0 down
+        sudo ip link set wlan0 up
 
     else
         echo "ERROR creating connection"
