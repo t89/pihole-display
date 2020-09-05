@@ -219,28 +219,32 @@ while True:
 
             TIME_STRING = stat_grabber.get_time()
             weather = stat_grabber.get_weather()
-
-            condition = weather['weatherDesc'][0]['value']
-            # Round precipitation
-            precipitation = round(float(weather['precipMM'][:-2]))
-            wind = '{} {}km/h'.format(weather['winddir16Point'], weather['windspeedKmph'])
-            pressure = '{}hPa'.format(weather['pressure'])
-            # probability = '' if (weather['probability'] == '-') else '{}% '.format(weather['probability'])
-            WEATHER_LINE_1 = '{} {}°C RH:{}%'.format(condition, weather['temp_C'], weather['humidity'])
-            WEATHER_LINE_2 = '{} {}mm'.format(wind, precipitation)
-
-            if 'sun' in condition.lower():
-                WEATHER_ICON = sun_icon
-            elif 'rain' in condition.lower():
-                WEATHER_ICON = rain_icon
-            elif 'cloud' in condition.lower():
-                WEATHER_ICON = cloud_icon
-            elif 'snow' in condition.lower():
-                WEATHER_ICON = snow_icon
-            elif ('thunder' in condition.lower()) or ('storm' in condition.lower()):
-                WEATHER_ICON = lightning_icon
+            if (weather['connection'] == False):
+                WEATHER_LINE_1 = 'Weather service'
+                WEATHER_LINE_2 = 'unreachable'
+                WEATHER_ICON = error_icon
             else:
-                WEATHER_ICON = clock_icon
+                condition = weather['weatherDesc'][0]['value']
+                # Round precipitation
+                precipitation = round(float(weather['precipMM'][:-2]))
+                wind = '{} {}km/h'.format(weather['winddir16Point'], weather['windspeedKmph'])
+                pressure = '{}hPa'.format(weather['pressure'])
+                # probability = '' if (weather['probability'] == '-') else '{}% '.format(weather['probability'])
+                WEATHER_LINE_1 = '{} {}°C RH:{}%'.format(condition, weather['temp_C'], weather['humidity'])
+                WEATHER_LINE_2 = '{} {}mm'.format(wind, precipitation)
+
+                if 'sun' in condition.lower():
+                    WEATHER_ICON = sun_icon
+                elif 'rain' in condition.lower():
+                    WEATHER_ICON = rain_icon
+                elif 'cloud' in condition.lower():
+                    WEATHER_ICON = cloud_icon
+                elif 'snow' in condition.lower():
+                    WEATHER_ICON = snow_icon
+                elif ('thunder' in condition.lower()) or ('storm' in condition.lower()):
+                    WEATHER_ICON = lightning_icon
+                else:
+                    WEATHER_ICON = clock_icon
 
         elif CURRENT_STATE == 2:
             # pihole stats
