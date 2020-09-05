@@ -2,7 +2,7 @@
 
 echo "Checking FTL"
 
-read -r destination_version < core-pihole
+read -r destination_version < ftl-version
 current_version="$(pihole -v -f | awk '{print $4;}')"
 
 if [[ $current_version == *"release/"* ]]; then
