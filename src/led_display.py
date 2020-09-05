@@ -213,6 +213,9 @@ while True:
             cloud_icon = b'\xE2\x80\xB9'.decode()
             snow_icon = b'\x4B'.decode()
             clock_icon = b'\xC3\xAE'.decode()
+            retry_icon = b'\xC3\xB5'.decode()
+            error_icon = b'\x6E'.decode()
+            qmark_icon = b'\x3F'.decode()
 
             TIME_STRING = stat_grabber.get_time()
             weather = stat_grabber.get_weather()
