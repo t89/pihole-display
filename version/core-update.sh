@@ -33,10 +33,3 @@ else
     echo "Installed version $current_version is up to date"
 fi
 
-
-# Get rid of index.lock
-# sudo rm -f /etc/.pihole/.git/index.lock
-
-
-
-pihole checkout core "release/$version"
