@@ -210,9 +210,13 @@ class StatGrabber():
             # 'windspeedMiles': '11'
 
             self.weather = current_condition[0]
-        except subprocess.CalledProcessError as exc:
+        except ValueError as exc:
+            # JSONDecodeError, which is used by simplejson, is a subclass of ValueError
             print(exc)
-            self.weather['status'] = str(exc)
+            self.weather['connection'] = False
+        else:
+            # if no exception
+            self.weather['connection'] = True
 
     def load_weather(self):
         self.last_weather_check = time.time()
