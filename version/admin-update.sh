@@ -36,7 +36,7 @@ if [ "$(version "$destination_version")" -gt "$(version "$current_version")" ]; 
     echo "Installed version $current_version is outdated."
     echo "Updating to $destination_version."
 
-    pihole checkout web "release/v$destination_version"
+    echo "y" | pihole checkout web "release/v$destination_version"
 else
     echo "Installed version $current_version is up to date"
 fi
