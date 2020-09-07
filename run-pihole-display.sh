@@ -47,7 +47,7 @@ else
 fi
 
 # Run display software in background
-python3 "$DIR/src/led_display.py" >> "../pihole-display.log" &
+python3 "$DIR/src/__main__.py" &
 
 ##
 # Updating blocklists on the raspberry pi zero may take up to

@@ -11,7 +11,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
 
 # Run display software in background
-python3 "$DIR/src/led_display.py"
+python3 "$DIR/src/__main__.py"
 
 ##
 # Updating blocklists on the raspberry pi zero may take up to
