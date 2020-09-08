@@ -296,7 +296,7 @@ class Display(Observer, threading.Thread):
                             weather_icon = sun_icon
                         elif 'rain' in condition.lower():
                             weather_icon = rain_icon
-                        elif 'cloud' in condition.lower():
+                        elif ('cloud' in condition.lower()) or ('overcast' in condition.lower()):
                             weather_icon = cloud_icon
                         elif 'snow' in condition.lower():
                             weather_icon = snow_icon
