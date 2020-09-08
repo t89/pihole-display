@@ -9,6 +9,7 @@
 
 import time
 import subprocess
+import threading
 
 from board import SCL, SDA
 import busio
@@ -17,9 +18,25 @@ import adafruit_ssd1306
 import os.path
 
 from stat_grabber import StatGrabber
+from observer import Observer, Subject
 
+from enum import Enum
 
-class Display:
+class MODE(Enum):
+    CLEAR = 0
+    BOOT = 1
+    CYCLE = 2
+    PROGRESS = 3
+    WARNING = 4
+
+class Display(Observer, threading.Thread):
+    ##
+    # Observer Interface
+    def update(self, subject: Subject) -> None:
+        """ React to subject updates """
+        self.current_mode = subject.mode
+        self.current_message_dict = subject.current_message_dict
+
     def __init__(self):
         ##
         # Initializes hardware and drawing interface
@@ -31,6 +48,11 @@ class Display:
 
         ##
         # Instance Variables
+
+        # Observer Pattern
+        self.current_mode = MODE.CLEAR
+        self.current_message_dict = {}
+
         self.current_state = 0
         self.pihole_stats = {}
 
@@ -38,6 +60,11 @@ class Display:
         self.init_pihole_stats()
 
         self.stat_grabber = StatGrabber()
+
+        self.special_mode = 0
+
+        # Super Init
+        super(Display, self).__init__()
 
     def init_display(self):
         """ Display Configuration """
