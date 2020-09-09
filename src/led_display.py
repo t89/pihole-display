@@ -240,6 +240,10 @@ class Display(Observer, threading.Thread):
         retry_icon = b'\xC3\xB5'.decode()
         error_icon = b'\x6E'.decode()
         qmark_icon = b'\x3F'.decode()
+        warning_icon = b'\x21'.decode()
+        fog_icon = b'\x22'.decode()
+        clear_icon = b'\x52'.decode()
+        wind_icon = b'\x43'.decode()
 
         if 'sun' in condition.lower():
             weather_icon = sun_icon
@@ -249,8 +253,14 @@ class Display(Observer, threading.Thread):
             weather_icon = rain_icon
         elif ('cloud' in condition.lower()) or ('overcast' in condition.lower()):
             weather_icon = cloud_icon
+        elif 'clear' in condition.lower():
+            weather_icon = clear_icon
         elif 'snow' in condition.lower():
             weather_icon = snow_icon
+        elif 'fog' in condition.lower():
+            weather_icon = fog_icon
+        elif 'wind' in condition.lower():
+            weather_icon = wind_icon
         elif ('thunder' in condition.lower()) or ('storm' in condition.lower()):
             weather_icon = lightning_icon
         else:
