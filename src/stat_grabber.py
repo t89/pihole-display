@@ -92,68 +92,68 @@ class StatGrabber():
 
         try:
             stats['version_core'] = raw_stat_list[raw_stat_list.index('Core:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['version_core'] = ''
 
         try:
             stats['version_web'] = raw_stat_list[raw_stat_list.index('Web:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['version_web'] = ''
 
         try:
             stats['version_ftl'] = raw_stat_list[raw_stat_list.index('FTL:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['version_ftl'] = ''
 
         try:
             stats['hostname'] = raw_stat_list[raw_stat_list.index('Hostname:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['hostname'] = ''
 
         try:
             stats['uptime'] = raw_stat_list[raw_stat_list.index('Uptime:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['uptime'] = ''
 
         try:
             stats['status'] = raw_stat_list[raw_stat_list.index('Pi-hole:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['status'] = ''
 
         try:
             stats['known_client_count'] = raw_stat_list[raw_stat_list.index('(Leased:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['known_client_count'] = ''
 
         try:
             stats['today_percentage'] = raw_stat_list[raw_stat_list.index('Today:')+1][:-1]
-        except IndexError as exc:
+        except ValueError as exc:
             print(exc)
             stats['today_percentage'] = ''
 
         try:
             stats['blocking'] = raw_stat_list[raw_stat_list.index('(Blocking:')+1]
-        except IndexError as exc:
+        except ValueError as exc:
             stats['blocking'] = ''
             print(exc)
 
         try:
             stats['ratio'] = (raw_stat_list[raw_stat_list.index('(Total:')+1],
                               raw_stat_list[raw_stat_list.index('(Total:')+3])
-        except IndexError as exc:
+        except ValueError as exc:
             stats['ratio'] = ''
             print(exc)
 
         try:
             stats['topclient'] = self.check_replace_known_client(raw_stat_list[raw_stat_list.index('Client:')+1])
-        except IndexError as exc:
+        except ValueError as exc:
             stats['topclient'] = ''
             print(exc)
 
