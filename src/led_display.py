@@ -228,6 +228,28 @@ class Display(Observer, threading.Thread):
         if refresh:
             self.display.show()
 
+    def draw_system_stats(self):
+        progressbar_width = 1
+        cpu_percentage = float(self.stat_grabber.get_cpu_load())/100.0
+        ram_percentage = float(self.stat_grabber.get_memory_percentage())/100.0 # cut off percentage sign
+
+        self.draw.text((0, self.font_offset),
+                        'CPU: ',
+                        font=self.half_font,
+                        fill=255)
+        self.draw.text((0, self.font_offset + self.half_font_size),
+                        'RAM: ',
+                        font=self.half_font,
+                        fill=255)
+
+        cpu_bar_origin = (self.width/2, 1)
+        ram_bar_origin = (self.width/2, self.half_font_size + 1)
+
+        bar_size = (self.width/2 - progressbar_width - 2, self.half_font_size-2)
+
+        self.draw_bar_horizontal(cpu_bar_origin, bar_size, cpu_percentage)
+        self.draw_bar_horizontal(ram_bar_origin, bar_size, ram_percentage)
+
     def weather_icon_for_condition(self, condition):
         """ Returns weather icon for condition """
 
@@ -454,25 +476,8 @@ class Display(Observer, threading.Thread):
                 # draw.text((0, self.font_offset + self.half_font_size + self.small_font_size), '{0:>15}'.format(self.ph_uptime[:-3]), font=self.small_font, fill=255)
 
             else:
-                cpu_percentage = float(self.stat_grabber.get_cpu_load())/100.0
-                ram_percentage = float(self.stat_grabber.get_memory_percentage())/100.0 # cut off percentage sign
-
-                self.draw.text((0, self.font_offset),
-                                'CPU: ',
-                                font=self.half_font,
-                                fill=255)
-                self.draw.text((0, self.font_offset + self.half_font_size),
-                                'RAM: ',
-                                font=self.half_font,
-                                fill=255)
-
-                cpu_bar_origin = (self.width/2, 1)
-                ram_bar_origin = (self.width/2, self.half_font_size + 1)
-
-                bar_size = (self.width/2 - progressbar_width - 2, self.half_font_size-2)
-
-                self.draw_bar_horizontal(cpu_bar_origin, bar_size, cpu_percentage)
-                self.draw_bar_horizontal(ram_bar_origin, bar_size, ram_percentage)
+                # System Stats State
+                self.draw_system_stats()
 
             # Draw State Progress
             progress = time_delta / swap_threshold
