@@ -21,7 +21,7 @@ class StatGrabber():
         self.encoding = 'utf-8'
         self.stats = {}
 
-        self.weather = {}
+        self.weather = {'connection': False}
         self.last_weather_check = time.time() - 9999
         self.load_weather()
 
@@ -164,10 +164,9 @@ class StatGrabber():
         return self.stats
 
     def get_weather(self):
-        # every 5 minutes
-        if time.time() - self.last_weather_check >= 300:
+        # every 5 minutes, or whenever last query was unsuccessful
+        if (time.time() - self.last_weather_check >= 300) or not self.weather['connection']:
             self.load_weather()
-
         return self.weather
 
     def load_weather_for_location(self, location):
