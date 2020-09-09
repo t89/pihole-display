@@ -150,6 +150,22 @@ class Display(Observer, threading.Thread):
         self.ph_active_device_count = self.pihole_stats['active_device_count']
         self.ph_known_client_count = self.pihole_stats['known_client_count']
 
+    def config_for_mode(self, mode: MODE):
+        config = {}
+        if MODE.BOOT:
+            pass
+        elif MODE.CLEAR:
+            pass
+        elif MODE.CYCLE:
+            config = {'should_cycle' : True,
+                      'state_count': 4,
+                      'durations_for_state': [10, 15, 10, 10]}
+        elif MODE.PROGRESS:
+            pass
+        elif MODE.WARNING:
+            pass
+        return config
+
     def draw_bar_horizontal(self, origin, size, percentage):
         """ Use draw to draw progress bars within provided dimensions """
         border_stroke = 1
@@ -212,6 +228,39 @@ class Display(Observer, threading.Thread):
         if refresh:
             self.display.show()
 
+    def weather_icon_for_condition(self, condition):
+        """ Returns weather icon for condition """
+
+        sun_icon = b'\xC5\xBD'.decode()
+        rain_icon = b'\xC5\xA0'.decode()
+        lightning_icon = b'\xC5\x92'.decode()
+        cloud_icon = b'\xE2\x80\xB9'.decode()
+        snow_icon = b'\x4B'.decode()
+        clock_icon = b'\xC3\xAE'.decode()
+        retry_icon = b'\xC3\xB5'.decode()
+        error_icon = b'\x6E'.decode()
+        qmark_icon = b'\x3F'.decode()
+
+        if 'sun' in condition.lower():
+            weather_icon = sun_icon
+        elif 'error' in condition.lower():
+            weather_icon = error_icon
+        elif 'rain' in condition.lower():
+            weather_icon = rain_icon
+        elif ('cloud' in condition.lower()) or ('overcast' in condition.lower()):
+            weather_icon = cloud_icon
+        elif 'snow' in condition.lower():
+            weather_icon = snow_icon
+        elif ('thunder' in condition.lower()) or ('storm' in condition.lower()):
+            weather_icon = lightning_icon
+        else:
+            weather_icon = clock_icon
+
+        return weather_icon
+
+    def change_mode(self, mode: MODE):
+        self.current_mode = mode
+
     def run(self):
         """ Display main loop with config and state machine """
 
@@ -221,12 +270,14 @@ class Display(Observer, threading.Thread):
         delay = 1.0/self.max_fps
 
         # Config
-        swap_treshold = 10 # time in seconds after which the next screen will be shown
+
+        # time in seconds after which the next screen will be shown
+        swap_threshold = 10
         screen_count = 4
         progressbar_width = 1
 
         # Calculated configuration
-        step_size = self.width/self.max_fps/swap_treshold
+        step_size = self.width/self.max_fps/swap_threshold
 
         self.update_pihole_stats()
 
@@ -244,16 +295,42 @@ class Display(Observer, threading.Thread):
         tick = 0
 
         while self.should_run:
+            ##
+            # House Keeping
+
+            # load config
+            # config = self.config_for_mode(self.current_mode)
+
+            # time in seconds after which the next screen will be shown
+            # swap_threshold = config['durations_for_state'][self.current_state]
+
+            # Clear Screen
+            self.clear_display()
+
             now = time.time()
             time_delta = now - last_swap_time
 
             should_swap = False
-            progress = time_delta / swap_treshold
+            progress = time_delta / swap_threshold
 
-            if time_delta >= swap_treshold:
+            if time_delta >= swap_threshold:
                 should_swap = True
                 last_swap_time = now
 
+            # if self.current_mode is MODE.CYCLE:
+            #     pass
+            # elif self.current_mode is MODE.BOOT:
+            #     pass
+            # elif self.current_mode is MODE.CLEAR:
+            #     pass
+            # elif self.current_mode is MODE.PROGRESS:
+            #     pass
+            # elif self.current_mode is MODE.WARNING:
+            #     pass
+
+
+            ##
+            # State cycle
             if should_swap:
                 self.current_state = (self.current_state + 1) % screen_count
 
@@ -266,22 +343,13 @@ class Display(Observer, threading.Thread):
                 elif self.current_state == 1:
                     # time state
 
-                    sun_icon = b'\xC5\xBD'.decode()
-                    rain_icon = b'\xC5\xA0'.decode()
-                    lightning_icon = b'\xC5\x92'.decode()
-                    cloud_icon = b'\xE2\x80\xB9'.decode()
-                    snow_icon = b'\x4B'.decode()
-                    clock_icon = b'\xC3\xAE'.decode()
-                    retry_icon = b'\xC3\xB5'.decode()
-                    error_icon = b'\x6E'.decode()
-                    qmark_icon = b'\x3F'.decode()
-
                     time_string = self.stat_grabber.get_time()
                     weather = self.stat_grabber.get_weather()
                     if (weather['connection'] is not True):
                         weather_line_1 = 'Weather service'
                         weather_line_2 = 'unreachable'
-                        weather_icon = error_icon
+                        condition = 'error'
+
                     else:
                         condition = weather['weatherDesc'][0]['value']
                         # Round precipitation
@@ -292,30 +360,11 @@ class Display(Observer, threading.Thread):
                         weather_line_1 = '{} {}°C RH:{}%'.format(condition, weather['temp_C'], weather['humidity'])
                         weather_line_2 = '{} {}mm'.format(wind, precipitation)
 
-                        if 'sun' in condition.lower():
-                            weather_icon = sun_icon
-                        elif 'rain' in condition.lower():
-                            weather_icon = rain_icon
-                        elif ('cloud' in condition.lower()) or ('overcast' in condition.lower()):
-                            weather_icon = cloud_icon
-                        elif 'snow' in condition.lower():
-                            weather_icon = snow_icon
-                        elif ('thunder' in condition.lower()) or ('storm' in condition.lower()):
-                            weather_icon = lightning_icon
-                        else:
-                            weather_icon = clock_icon
+                    weather_icon = self.weather_icon_for_condition(condition)
 
                 elif self.current_state == 2:
                     # pihole stats
                     self.update_pihole_stats()
-
-            ##
-            # House Keeping
-            tick = (tick + 1) % self.max_fps
-
-            # Clear Screen
-            # self.draw.rectangle((0, 0, self.width, self.height), outline=0, fill=0)
-            self.clear_display()
 
             # State handling
             if self.current_state == 1:
@@ -432,3 +481,8 @@ class Display(Observer, threading.Thread):
             self.display.image(self.image)
             self.display.show()
             time.sleep(delay)
+
+            ##
+            # Post Loop House Keeping
+            tick = (tick + 1) % self.max_fps
+
