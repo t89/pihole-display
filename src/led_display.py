@@ -257,22 +257,55 @@ class Display(Observer, threading.Thread):
                             fill=0,
                             outline=1)
 
+        square_delta = (outer_chip_size - inner_chip_size)/2
+        inner_square_x = outer_square_x + square_delta
+        inner_square_y = outer_square_y + square_delta
+
         if percentage is not None:
             vertical_percentage_offset = outer_square_y + outer_chip_size - percentage*outer_chip_size
             self.draw.rectangle((outer_square_x, vertical_percentage_offset, outer_square_x + outer_chip_size, outer_square_y + outer_chip_size),
                                 fill=1,
                                 outline=1)
+
+
         # self.draw.rectangle((outer_square_x, outer_square_y, outer_chip_size, outer_chip_size),
         #                     fill=0,
         #                     outline=1)
 
-        square_delta = (outer_chip_size - inner_chip_size)/2
-        inner_square_x = outer_square_x + square_delta
-        inner_square_y = outer_square_y + square_delta
-
         self.draw.rectangle((inner_square_x, inner_square_y, inner_square_x + inner_chip_size, inner_square_y + inner_chip_size),
                             fill=0,
                             outline=1)
+
+        if vertical_percentage_offset <= inner_square_y + inner_chip_size + 1:
+            self.draw.line((inner_square_x,
+                            max(vertical_percentage_offset, inner_square_y),
+                            inner_square_x,
+                            inner_square_y + inner_chip_size),
+                           fill=0, width=1)
+
+            self.draw.line((inner_square_x + inner_chip_size,
+                            max(vertical_percentage_offset, inner_square_y),
+                            inner_square_x + inner_chip_size,
+                            inner_square_y + inner_chip_size), fill=0, width=1)
+
+            self.draw.rectangle((inner_square_x + 1,
+                                 vertical_percentage_offset,
+                                 inner_square_x + inner_chip_size - 1,
+                                 inner_square_y + inner_chip_size - 1),
+                                fill=1,
+                                outline=1)
+
+            self.draw.line((inner_square_x,
+                            inner_square_y + inner_chip_size,
+                            inner_square_x + inner_chip_size,
+                            inner_square_y + inner_chip_size), fill=0, width=1)
+
+            if vertical_percentage_offset <= inner_square_y + 1:
+                self.draw.line((inner_square_x,
+                                inner_square_y,
+                                inner_square_x + inner_chip_size,
+                                inner_square_y), fill=0, width=1)
+
         # self.draw.rectangle((inner_square_x, inner_square_y, inner_chip_size, inner_chip_size),
         #                     fill=0,
         #                     outline=1)
@@ -315,48 +348,61 @@ class Display(Observer, threading.Thread):
                            fill=255,
                            width=1)
 
-            print("Vertical Pin Location: {}".format(pin_pos_y))
-
+            if percentage is not None and percentage < 1.0:
             # Animate input...
-            if tick % 3 == 0:
+            # if tick % 3 == 0:
+                data_pos = right_outer_border + 1
+                line_delta = self.width-data_pos
                 r = random.randint(0,5)
                 if r<=1:
                     # data_pos = right_outer_border + (self.max_fps-tick)
-                    data_pos = right_outer_border + 1
-
-                    # self.draw.line((data_pos,
-                    #                 pin_pos_y,
-                    #                 data_pos + random.randint(5,20),
-                    #                 pin_pos_y),
-                    #             fill=255,
-                    #             width=1)
 
                     self.draw.line((data_pos,
                                     pin_pos_y,
-                                    self.width,
+                                    data_pos + random.randint(5, line_delta),
                                     pin_pos_y),
                                 fill=255,
                                 width=1)
 
+                    # self.draw.line((data_pos,
+                    #                 pin_pos_y,
+                    #                 self.width,
+                    #                 pin_pos_y),
+                    #             fill=255,
+                    #             width=1)
+
     def draw_progress_view(self, tick=0):
         name = self.current_message_dict['activity_name']
         detail = self.current_message_dict['activity_detail']
+        name_finished = self.current_message_dict['activity_name_finished']
+        detail_finished = self.current_message_dict['activity_detail_finished']
         percentage = self.current_message_dict['percentage']
 
         offset = 36
 
-        if (name is not None):
+        progress_label_1 = name
+        progress_label_2 = detail
+
+        if (percentage is not None) and (percentage >= 1.0):
+            if (name_finished is not None):
+                progress_label_1 = name_finished
+
+            if (detail_finished is not None):
+                progress_label_2 = detail_finished
+
+        if (progress_label_1 is not None):
             self.draw.text((offset, self.font_offset),
-                            '{}'.format(name),
+                            '{}'.format(progress_label_1),
                             font=self.small_font,
                             fill=255)
 
-        if (detail is not None):
+        if (progress_label_2 is not None):
             # 1+ to put gap between chip animation
             self.draw.text((offset, 1 + self.font_offset+3*self.small_font_size),
-                            '{}'.format(detail),
+                            '{}'.format(progress_label_2),
                             font=self.small_font,
                             fill=255)
+
 
         self.draw_chip(pos=(0, 0), percentage=percentage, tick=tick)
             # square_width = 5

@@ -47,16 +47,20 @@ class Housekeeper(Subject):
             self.mode = MODE.CYCLE
             self.update()
 
-    def loading_mode(self, activity_name=None, activity_detail=None, percentage=None):
+    def loading_mode(self, activity_name=None, activity_detail=None, percentage=None, activity_name_finished=None, activity_detail_finished=None):
         if self.mode is not MODE.PROGRESS:
             self.mode = MODE.PROGRESS
             self.current_message_dict = {'activity_name': activity_name,
                                          'activity_detail': activity_detail,
+                                         'activity_name_finished': activity_name_finished,
+                                         'activity_detail_finished': activity_detail_finished,
                                         'percentage': percentage}
             self.update()
         else:
             self.current_message_dict['activity_name'] = activity_name
             self.current_message_dict['activity_detail'] = activity_detail
+            self.current_message_dict['activity_name_finished'] = activity_name_finished
+            self.current_message_dict['activity_detail_finished'] = activity_detail_finished
             self.current_message_dict['percentage'] = percentage
 
     ##

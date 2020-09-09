@@ -30,9 +30,12 @@ def main():
         from time import sleep
         for i in range (1, 100):
             percentage = 1.0/100.0*i
-            housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=percentage)
+            housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=percentage, activity_name_finished='UPDATE', activity_detail_finished='FINISHED')
             # print(percentage)
-            sleep(0.5)
+            sleep(0.2)
+
+        housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=1.0, activity_name_finished='UPDATE', activity_detail_finished='FINISHED')
+
 
 
     except KeyboardInterrupt:
