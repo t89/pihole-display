@@ -321,7 +321,6 @@ class Display(Observer, threading.Thread):
             time_delta = now - last_swap_time
 
             should_swap = False
-            progress = time_delta / swap_threshold
 
             if time_delta >= swap_threshold:
                 should_swap = True
@@ -476,6 +475,7 @@ class Display(Observer, threading.Thread):
                 self.draw_bar_horizontal(ram_bar_origin, bar_size, ram_percentage)
 
             # Draw State Progress
+            progress = time_delta / swap_threshold
             size = self.width*progress
             v_size = self.height*progress
             # self.draw.rectangle((0, 0, size, progressbar_width), outline=1, fill=255)
