@@ -24,17 +24,17 @@ def main():
         display.start()
 
         # housekeeper.clear_mode()
-        # housekeeper.cycle_mode()
+        housekeeper.cycle_mode()
         # housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE')
 
-        from time import sleep
-        for i in range (1, 100):
-            percentage = 1.0/100.0*i
-            housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=percentage, activity_name_finished='UPDATE', activity_detail_finished='FINISHED')
-            # print(percentage)
-            sleep(0.2)
+        # from time import sleep
+        # for i in range (1, 100):
+        #     percentage = 1.0/100.0*i
+        #     housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=percentage, activity_name_finished='UPDATE', activity_detail_finished='FINISHED')
+        #     # print(percentage)
+        #     sleep(0.2)
 
-        housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=1.0, activity_name_finished='UPDATE', activity_detail_finished='FINISHED')
+        # housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=1.0, activity_name_finished='UPDATE', activity_detail_finished='FINISHED')
 
 
 
