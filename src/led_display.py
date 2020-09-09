@@ -237,6 +237,8 @@ class Display(Observer, threading.Thread):
     def draw_chip(self, pos=(0, 0), percentage=None, tick=0):
         outer_chip_size = 26
         inner_chip_size = 12
+        # pin_offset = 3
+        # pin_count = 5
         pin_offset = 5
         pin_count = 8
         pin_length = 3
