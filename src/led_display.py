@@ -475,17 +475,17 @@ class Display(Observer, threading.Thread):
                 self.draw_bar_horizontal(cpu_bar_origin, bar_size, cpu_percentage)
                 self.draw_bar_horizontal(ram_bar_origin, bar_size, ram_percentage)
 
-                # Draw State Progress
-                size = self.width*progress
-                v_size = self.height*progress
-                # self.draw.rectangle((0, 0, size, progressbar_width), outline=1, fill=255)
-                # self.draw.rectangle((0, height-progressbar_width, size, height), outline=1, fill=255)
-                self.draw.rectangle((self.width-progressbar_width,
-                                        self.height-v_size,
-                                        self.width,
-                                        self.height),
-                                    outline=1,
-                                    fill=255)
+            # Draw State Progress
+            size = self.width*progress
+            v_size = self.height*progress
+            # self.draw.rectangle((0, 0, size, progressbar_width), outline=1, fill=255)
+            # self.draw.rectangle((0, height-progressbar_width, size, height), outline=1, fill=255)
+            self.draw.rectangle((self.width-progressbar_width,
+                                    self.height-v_size,
+                                    self.width,
+                                    self.height),
+                                outline=1,
+                                fill=255)
 
             # Display image.
             self.display.image(self.image)
