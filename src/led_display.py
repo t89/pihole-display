@@ -10,6 +10,7 @@
 import time
 import threading
 import os.path
+import random
 from enum import Enum
 from PIL import Image, ImageDraw, ImageFont
 from board import SCL, SDA
@@ -42,6 +43,10 @@ class Display(Observer, threading.Thread):
         ##
         # Initializes hardware and drawing interface
         self.init_display()
+
+        ##
+        # Seed random
+        random.seed('denali')
 
         ##
         # Condition for main loop
@@ -229,8 +234,137 @@ class Display(Observer, threading.Thread):
         if refresh:
             self.display.show()
 
+    def draw_chip(self, pos=(0, 0), percentage=None, tick=0):
+        outer_chip_size = 26
+        inner_chip_size = 12
+        pin_offset = 5
+        pin_count = 8
+        pin_length = 3
+        pin_distance = (outer_chip_size - 2*pin_offset)/pin_count
+
+        # debug
+        # self.draw.rectangle((pos[0], pos[1], pos[0]+outer_chip_size+2*pin_length, pos[1]+outer_chip_size+2*pin_length),
+        #                     fill=0,
+        #                     outline=1)
+        # self.draw.line((1, 0, 1, self.height), fill=255, width=1)
+
+
+        outer_square_x = pos[0] + pin_length
+        outer_square_y = pos[1] + pin_length
+        self.draw.rectangle((outer_square_x, outer_square_y, outer_square_x + outer_chip_size, outer_square_y + outer_chip_size),
+                            fill=0,
+                            outline=1)
+
+        if percentage is not None:
+            vertical_percentage_offset = outer_square_y + outer_chip_size - percentage*outer_chip_size
+            self.draw.rectangle((outer_square_x, vertical_percentage_offset, outer_square_x + outer_chip_size, outer_square_y + outer_chip_size),
+                                fill=1,
+                                outline=1)
+        # self.draw.rectangle((outer_square_x, outer_square_y, outer_chip_size, outer_chip_size),
+        #                     fill=0,
+        #                     outline=1)
+
+        square_delta = (outer_chip_size - inner_chip_size)/2
+        inner_square_x = outer_square_x + square_delta
+        inner_square_y = outer_square_y + square_delta
+
+        self.draw.rectangle((inner_square_x, inner_square_y, inner_square_x + inner_chip_size, inner_square_y + inner_chip_size),
+                            fill=0,
+                            outline=1)
+        # self.draw.rectangle((inner_square_x, inner_square_y, inner_chip_size, inner_chip_size),
+        #                     fill=0,
+        #                     outline=1)
+
+        for pin_idx in range(0, pin_count):
+            # + 1 seems hacky. I probably messed something up
+            pin_pos_x = outer_square_x + pin_offset + pin_idx*pin_distance + 1
+            pin_pos_y = outer_square_y + pin_offset + pin_idx*pin_distance + 1
+            v_x = pos[0]
+            v_y = pos[1]
+
+            # vertical
+            self.draw.line((pin_pos_x,
+                            v_y,
+                            pin_pos_x,
+                            outer_square_y),
+                           fill=255,
+                           width=1)
+
+            self.draw.line((pin_pos_x,
+                            outer_square_y + outer_chip_size,
+                            pin_pos_x,
+                            1 + outer_square_y + outer_chip_size + pin_length),
+                           fill=255,
+                           width=1)
+
+            # horizontal
+            self.draw.line((v_x,
+                            pin_pos_y,
+                            outer_square_x,
+                            pin_pos_y),
+                           fill=255,
+                           width=1)
+
+            right_outer_border = outer_square_x + outer_chip_size + pin_length
+            self.draw.line((outer_square_x +  outer_chip_size,
+                            pin_pos_y,
+                            right_outer_border,
+                            pin_pos_y),
+                           fill=255,
+                           width=1)
+
+            print("Vertical Pin Location: {}".format(pin_pos_y))
+
+            # Animate input...
+            if tick % 3 == 0:
+                r = random.randint(0,5)
+                if r<=1:
+                    # data_pos = right_outer_border + (self.max_fps-tick)
+                    data_pos = right_outer_border + 1
+
+                    # self.draw.line((data_pos,
+                    #                 pin_pos_y,
+                    #                 data_pos + random.randint(5,20),
+                    #                 pin_pos_y),
+                    #             fill=255,
+                    #             width=1)
+
+                    self.draw.line((data_pos,
+                                    pin_pos_y,
+                                    self.width,
+                                    pin_pos_y),
+                                fill=255,
+                                width=1)
+
     def draw_progress_view(self, tick=0):
-        pass
+        name = self.current_message_dict['activity_name']
+        detail = self.current_message_dict['activity_detail']
+        percentage = self.current_message_dict['percentage']
+
+        offset = 36
+
+        if (name is not None):
+            self.draw.text((offset, self.font_offset),
+                            '{}'.format(name),
+                            font=self.small_font,
+                            fill=255)
+
+        if (detail is not None):
+            # 1+ to put gap between chip animation
+            self.draw.text((offset, 1 + self.font_offset+3*self.small_font_size),
+                            '{}'.format(detail),
+                            font=self.small_font,
+                            fill=255)
+
+        self.draw_chip(pos=(0, 0), percentage=percentage, tick=tick)
+            # square_width = 5
+            # origin_x = 10*tick
+            # origin_y = 10
+
+            # self.draw.rectangle((origin_x, origin_y, origin_x + square_width, origin_y + square_width),
+            #                     fill=0,
+            #                     outline=1)
+
 
     def draw_blocked_stats(self, tick=0):
         """ Generates frame of blocked state for provided tick """

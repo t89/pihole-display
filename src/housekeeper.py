@@ -33,9 +33,31 @@ class Housekeeper(Subject):
     ##
     # Pihole Management
     def update(self):
-        self.mode = MODE.PROGRESS
-        self.current_message_dict = {'foo':'bar'}
+        # self.mode = MODE.CYCLE
+        # self.current_message_dict = {'foo':'bar'}
         self.notify()
+
+    def clear_mode(self):
+        if self.mode is not MODE.CLEAR:
+            self.mode = MODE.CLEAR
+            self.update()
+
+    def cycle_mode(self):
+        if self.mode is not MODE.CYCLE:
+            self.mode = MODE.CYCLE
+            self.update()
+
+    def loading_mode(self, activity_name=None, activity_detail=None, percentage=None):
+        if self.mode is not MODE.PROGRESS:
+            self.mode = MODE.PROGRESS
+            self.current_message_dict = {'activity_name': activity_name,
+                                         'activity_detail': activity_detail,
+                                        'percentage': percentage}
+            self.update()
+        else:
+            self.current_message_dict['activity_name'] = activity_name
+            self.current_message_dict['activity_detail'] = activity_detail
+            self.current_message_dict['percentage'] = percentage
 
     ##
     # Setter & Getter

@@ -1,14 +1,17 @@
 #!/usr/bin/python
 
 import os
-import sys
-from led_display import Display
+from led_display import Display, MODE
 from housekeeper import Housekeeper
 
+
 def get_script_path():
+    """ Returns path of script """
     return os.path.dirname(__file__)
 
+
 def main():
+    """ Greetings, Professor Falken... """
     try:
         cwd_path = os.getcwd()
 
@@ -16,13 +19,29 @@ def main():
         display = Display()
 
         housekeeper.attach(display)
-        housekeeper.update()
 
-        display.run()
+        # display.daemon = True
+        display.start()
+
+        # housekeeper.clear_mode()
+        # housekeeper.cycle_mode()
+        # housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE')
+
+        from time import sleep
+        for i in range (1, 100):
+            percentage = 1.0/100.0*i
+            housekeeper.loading_mode(activity_name='UPDATING', activity_detail='FIRMWARE', percentage=percentage)
+            # print(percentage)
+            sleep(0.5)
+
 
     except KeyboardInterrupt:
         print('Keyboard Interrupt detected: Exiting.')
-        pass
+        # Shut down display
+        housekeeper.clear_mode()
+        display.should_run = False
+        # display.clear_display(refresh=True)
+        display.join(5)
 
 
 if __name__ == "__main__":
