@@ -8,28 +8,29 @@
 #
 
 import time
-import subprocess
 import threading
-
+import os.path
+from enum import Enum
+from PIL import Image, ImageDraw, ImageFont
 from board import SCL, SDA
 import busio
-from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
-import os.path
 
 from stat_grabber import StatGrabber
 from observer import Observer, Subject
 
-from enum import Enum
 
 class MODE(Enum):
+    """ Different View Modes """
     CLEAR = 0
     BOOT = 1
     CYCLE = 2
     PROGRESS = 3
     WARNING = 4
 
+
 class Display(Observer, threading.Thread):
+    """ Main display class implementing threaded run() loop """
     ##
     # Observer Interface
     def update(self, subject: Subject) -> None:
