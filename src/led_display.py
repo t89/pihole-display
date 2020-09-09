@@ -231,18 +231,18 @@ class Display(Observer, threading.Thread):
     def weather_icon_for_condition(self, condition):
         """ Returns weather icon for condition """
 
-        sun_icon = b'\xC5\xBD'.decode()
-        rain_icon = b'\xC5\xA0'.decode()
-        lightning_icon = b'\xC5\x92'.decode()
-        cloud_icon = b'\xE2\x80\xB9'.decode()
-        snow_icon = b'\x4B'.decode()
-        clock_icon = b'\xC3\xAE'.decode()
-        retry_icon = b'\xC3\xB5'.decode()
-        error_icon = b'\x6E'.decode()
-        qmark_icon = b'\x3F'.decode()
-        warning_icon = b'\x21'.decode()
-        fog_icon = b'\x22'.decode()
         clear_icon = b'\x52'.decode()
+        clock_icon = b'\xC3\xAE'.decode()
+        cloud_icon = b'\xE2\x80\xB9'.decode()
+        error_icon = b'\x6E'.decode()
+        fog_icon = b'\x22'.decode()
+        lightning_icon = b'\xC5\x92'.decode()
+        qmark_icon = b'\x3F'.decode()
+        rain_icon = b'\xC5\xA0'.decode()
+        retry_icon = b'\xC3\xB5'.decode()
+        snow_icon = b'\x4B'.decode()
+        sun_icon = b'\xC5\xBD'.decode()
+        warning_icon = b'\x21'.decode()
         wind_icon = b'\x43'.decode()
 
         if 'sun' in condition.lower():
