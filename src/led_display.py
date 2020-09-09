@@ -229,6 +229,9 @@ class Display(Observer, threading.Thread):
         if refresh:
             self.display.show()
 
+    def draw_progress_view(self, tick=0):
+        pass
+
     def draw_blocked_stats(self, tick=0):
         """ Generates frame of blocked state for provided tick """
 
@@ -396,115 +399,115 @@ class Display(Observer, threading.Thread):
             now = time.time()
             time_delta = now - last_swap_time
 
-            should_swap = False
+            if self.current_mode is MODE.CYCLE:
+                ##
+                # State swap calculation
+                should_swap = False
 
-            if time_delta >= swap_threshold:
-                should_swap = True
-                last_swap_time = now
-
-            # if self.current_mode is MODE.CYCLE:
-            #     pass
-            # elif self.current_mode is MODE.BOOT:
-            #     pass
-            # elif self.current_mode is MODE.CLEAR:
-            #     pass
-            # elif self.current_mode is MODE.PROGRESS:
-            #     pass
-            # elif self.current_mode is MODE.WARNING:
-            #     pass
-
-
-            ##
-            # State cycle
-            if should_swap:
-                self.current_state = (self.current_state + 1) % screen_count
+                if time_delta >= swap_threshold:
+                    should_swap = True
+                    last_swap_time = now
 
                 ##
-                # Put heavy load tasks here. These get executed _once_ when the state is swapped
-                if self.current_state == 0:
-                    # pihole stats state
-                    self.stat_grabber.refresh_pihole_stats()
+                # State cycle
+                if should_swap:
+                    self.current_state = (self.current_state + 1) % screen_count
 
-                elif self.current_state == 1:
-                    # time state
+                    ##
+                    # Put heavy load tasks here. These get executed _once_ when the state is swapped
+                    if self.current_state == 0:
+                        # pihole stats state
+                        self.stat_grabber.refresh_pihole_stats()
 
-                    time_string = self.stat_grabber.get_time()
-                    weather = self.stat_grabber.get_weather()
-                    if (weather['connection'] is not True):
-                        weather_line_1 = 'Weather service'
-                        weather_line_2 = 'unreachable'
-                        condition = 'error'
+                    elif self.current_state == 1:
+                        # time state
 
-                    else:
-                        condition = weather['weatherDesc'][0]['value']
-                        # Round precipitation
-                        precipitation = round(float(weather['precipMM'][:-2]))
-                        wind = '{} {}km/h'.format(weather['winddir16Point'], weather['windspeedKmph'])
-                        pressure = '{}hPa'.format(weather['pressure'])
-                        # probability = '' if (weather['probability'] == '-') else '{}% '.format(weather['probability'])
-                        weather_line_1 = '{} {}°C RH:{}%'.format(condition, weather['temp_C'], weather['humidity'])
-                        weather_line_2 = '{} {}mm'.format(wind, precipitation)
+                        time_string = self.stat_grabber.get_time()
+                        weather = self.stat_grabber.get_weather()
+                        if (weather['connection'] is not True):
+                            weather_line_1 = 'Weather service'
+                            weather_line_2 = 'unreachable'
+                            condition = 'error'
 
-                    weather_icon = self.weather_icon_for_condition(condition)
+                        else:
+                            condition = weather['weatherDesc'][0]['value']
+                            # Round precipitation
+                            precipitation = round(float(weather['precipMM'][:-2]))
+                            wind = '{} {}km/h'.format(weather['winddir16Point'], weather['windspeedKmph'])
+                            pressure = '{}hPa'.format(weather['pressure'])
+                            # probability = '' if (weather['probability'] == '-') else '{}% '.format(weather['probability'])
+                            weather_line_1 = '{} {}°C RH:{}%'.format(condition, weather['temp_C'], weather['humidity'])
+                            weather_line_2 = '{} {}mm'.format(wind, precipitation)
+
+                        weather_icon = self.weather_icon_for_condition(condition)
+
+                    elif self.current_state == 2:
+                        # pihole stats
+                        self.update_pihole_stats()
+
+                # State handling
+                if self.current_state == 1:
+                    # if (tick % 2 == 0):
+                    #     time_string = '{}'.format(time)
+                    # else:
+                    #     time_string = '{}'.format(time).replace(':',' ')
+
+                    wl1_h_offset = self.get_horizontal_offset(text=weather_line_1,
+                                                              font=self.small_font,
+                                                              tick=tick)
+                    wl2_h_offset = self.get_horizontal_offset(text=weather_line_2,
+                                                              font=self.small_font,
+                                                              tick=tick)
+
+                    self.draw.text((30, self.font_offset),
+                                   time_string,
+                                   font=self.half_font,
+                                   fill=255)
+                    self.draw.text((0, self.icon_font_offset), '{}'.format(weather_icon),
+                                   font=self.half_icon_font,
+                                   fill=255)
+                    self.draw.text((wl1_h_offset, self.font_offset + self.half_font_size),
+                                   weather_line_1,
+                                   font=self.small_font,
+                                   fill=255)
+                    self.draw.text((wl2_h_offset, self.font_offset + self.half_font_size + self.small_font_size),
+                                   weather_line_2,
+                                   font=self.small_font,
+                                   fill=255)
 
                 elif self.current_state == 2:
-                    # pihole stats
-                    self.update_pihole_stats()
+                    # Blocked Stats
+                    self.draw_blocked_stats(tick=tick)
 
-            # State handling
-            if self.current_state == 1:
-                # if (tick % 2 == 0):
-                #     time_string = '{}'.format(time)
-                # else:
-                #     time_string = '{}'.format(time).replace(':',' ')
+                elif self.current_state == 3:
+                    # Client Stats
+                    self.draw_client_stats(tick=tick)
 
-                wl1_h_offset = self.get_horizontal_offset(text=weather_line_1,
-                                                            font=self.small_font,
-                                                            tick=tick)
-                wl2_h_offset = self.get_horizontal_offset(text=weather_line_2,
-                                                            font=self.small_font,
-                                                            tick=tick)
+                else:
+                    # System Stats
+                    self.draw_system_stats()
 
-                self.draw.text((30, self.font_offset),
-                                time_string,
-                                font=self.half_font,
-                                fill=255)
-                self.draw.text((0, self.icon_font_offset), '{}'.format(weather_icon),
-                                font=self.half_icon_font,
-                                fill=255)
-                self.draw.text((wl1_h_offset, self.font_offset + self.half_font_size),
-                                weather_line_1,
-                                font=self.small_font,
-                                fill=255)
-                self.draw.text((wl2_h_offset, self.font_offset + self.half_font_size + self.small_font_size),
-                                weather_line_2,
-                                font=self.small_font,
-                                fill=255)
+                # Draw State Progress
+                progress = time_delta / swap_threshold
+                # size = self.width*progress
+                v_size = self.height*progress
+                # self.draw.rectangle((0, 0, size, progressbar_width), outline=1, fill=255)
+                # self.draw.rectangle((0, self.height-progressbar_width, size, self.height), outline=1, fill=255)
+                self.draw.rectangle((self.width-progressbar_width,
+                                        self.height-v_size,
+                                        self.width,
+                                        self.height),
+                                    outline=1,
+                                    fill=255)
 
-            elif self.current_state == 2:
-                # Blocked Stats
-                self.draw_blocked_stats(tick=tick)
-
-            elif self.current_state == 3:
-                # Client Stats
-                self.draw_client_stats(tick=tick)
-
-            else:
-                # System Stats
-                self.draw_system_stats()
-
-            # Draw State Progress
-            progress = time_delta / swap_threshold
-            size = self.width*progress
-            v_size = self.height*progress
-            # self.draw.rectangle((0, 0, size, progressbar_width), outline=1, fill=255)
-            # self.draw.rectangle((0, height-progressbar_width, size, height), outline=1, fill=255)
-            self.draw.rectangle((self.width-progressbar_width,
-                                    self.height-v_size,
-                                    self.width,
-                                    self.height),
-                                outline=1,
-                                fill=255)
+            elif self.current_mode is MODE.BOOT:
+                pass
+            elif self.current_mode is MODE.CLEAR:
+                pass
+            elif self.current_mode is MODE.PROGRESS:
+                self.draw_progress_view(tick=tick)
+            elif self.current_mode is MODE.WARNING:
+                pass
 
             # Display image.
             self.display.image(self.image)
