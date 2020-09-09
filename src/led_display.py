@@ -228,7 +228,60 @@ class Display(Observer, threading.Thread):
         if refresh:
             self.display.show()
 
+    def draw_blocked_stats(self, tick=0):
+        """ Generates frame of blocked state for provided tick """
+
+        progressbar_width = 1
+        blocked_today_header_string = 'Blocked today:'
+        blocked_h_offset = self.get_horizontal_offset(text=blocked_today_header_string,
+                                                        font=self.small_font,
+                                                        tick=tick)
+        self.draw.text((blocked_h_offset, self.font_offset),
+                        '{}'.format(blocked_today_header_string),
+                        font=self.small_font,
+                        fill=255)
+
+        origin = (0, self.small_font_size)
+        size = (self.width - progressbar_width - 2, self.half_font_size - 2)
+        self.draw_bar_horizontal(origin, size, self.ph_q_perc)
+
+        block_ratio_string = '({}/{}'.format(self.ph_q_blocked, self.ph_q_total)
+        block_ratio_h_offset = self.get_horizontal_offset(text=block_ratio_string, font=self.small_font, tick=tick)
+        self.draw.text((block_ratio_h_offset,
+                        self.font_offset + self.half_font_size + self.small_font_size),
+                       block_ratio_string,
+                       font=self.small_font,
+                       fill=255)
+
+    def draw_client_stats(self, tick=0):
+        """ Generates frame of client state for provided tick """
+        self.draw.text((0, self.font_offset),
+                        'Top Client:',
+                        font=self.small_font,
+                        fill=255)
+        # draw.text((x, self.font_offset + self.small_font_size), '{0:>15}'.format(self.ph_top_client), font=self.half_font, fill=255)
+        offset = self.get_horizontal_offset(text=self.ph_top_client,
+                                            font=self.half_font,
+                                            tick=tick)
+        self.draw.text((offset, self.font_offset + self.small_font_size),
+                        '{}'.format(self.ph_top_client),
+                        font=self.half_font,
+                        fill=255)
+
+        self.draw.text((0, self.font_offset + self.half_font_size + self.small_font_size),
+                        'Clients:',
+                        font=self.small_font,
+                        fill=255)
+        self.draw.text((0, self.font_offset + self.half_font_size + self.small_font_size),
+                        '{0:>15}'.format('{}/{}'.format(self.ph_active_device_count,
+                                                        self.ph_known_client_count)),
+                        font=self.small_font,
+                        fill=255)
+        # draw.text((0, self.font_offset + self.half_font_size), 'Uptime:', font=self.small_font, fill=255)
+        # draw.text((0, self.font_offset + self.half_font_size + self.small_font_size), '{0:>15}'.format(self.ph_uptime[:-3]), font=self.small_font, fill=255)
+
     def draw_system_stats(self):
+        """ Generates frame of system-stats state for provided tick """
         progressbar_width = 1
         cpu_percentage = float(self.stat_grabber.get_cpu_load())/100.0
         ram_percentage = float(self.stat_grabber.get_memory_percentage())/100.0 # cut off percentage sign
@@ -428,55 +481,15 @@ class Display(Observer, threading.Thread):
                                 fill=255)
 
             elif self.current_state == 2:
-                blocked_today_header_string = 'Blocked today:'
-                blocked_h_offset = self.get_horizontal_offset(text=blocked_today_header_string,
-                                                                font=self.small_font,
-                                                                tick=tick)
-                self.draw.text((blocked_h_offset, self.font_offset),
-                                '{}'.format(blocked_today_header_string),
-                                font=self.small_font,
-                                fill=255)
-
-                origin = (0, self.small_font_size)
-                size = (self.width - progressbar_width - 2, self.half_font_size - 2)
-                self.draw_bar_horizontal(origin, size, self.ph_q_perc)
-
-                block_ratio_string = '({}/{}'.format(self.ph_q_blocked, self.ph_q_total)
-                block_ratio_h_offset = self.get_horizontal_offset(text=block_ratio_string, font=self.small_font, tick=tick)
-                self.draw.text((block_ratio_h_offset,
-                                self.font_offset + self.half_font_size + self.small_font_size),
-                                block_ratio_string,
-                                font=self.small_font,
-                                fill=255)
+                # Blocked Stats
+                self.draw_blocked_stats(tick=tick)
 
             elif self.current_state == 3:
-                self.draw.text((0, self.font_offset),
-                                'Top Client:',
-                                font=self.small_font,
-                                fill=255)
-                # draw.text((x, self.font_offset + self.small_font_size), '{0:>15}'.format(self.ph_top_client), font=self.half_font, fill=255)
-                offset = self.get_horizontal_offset(text=self.ph_top_client,
-                                                    font=self.half_font,
-                                                    tick=tick)
-                self.draw.text((offset, self.font_offset + self.small_font_size),
-                                '{}'.format(self.ph_top_client),
-                                font=self.half_font,
-                                fill=255)
-
-                self.draw.text((0, self.font_offset + self.half_font_size + self.small_font_size),
-                                'Clients:',
-                                font=self.small_font,
-                                fill=255)
-                self.draw.text((0, self.font_offset + self.half_font_size + self.small_font_size),
-                                '{0:>15}'.format('{}/{}'.format(self.ph_active_device_count,
-                                                                self.ph_known_client_count)),
-                                font=self.small_font,
-                                fill=255)
-                # draw.text((0, self.font_offset + self.half_font_size), 'Uptime:', font=self.small_font, fill=255)
-                # draw.text((0, self.font_offset + self.half_font_size + self.small_font_size), '{0:>15}'.format(self.ph_uptime[:-3]), font=self.small_font, fill=255)
+                # Client Stats
+                self.draw_client_stats(tick=tick)
 
             else:
-                # System Stats State
+                # System Stats
                 self.draw_system_stats()
 
             # Draw State Progress
