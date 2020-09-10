@@ -3,7 +3,7 @@ adafruit-blinka
 adafruit-circuitpython-ssd1306
 circuitpython-rgb-display
 coverage
-pihole
+hole
 pillow
 psutil
 pylint
