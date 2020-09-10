@@ -1,5 +1,12 @@
+adafruit
+adafruit-blinka
+adafruit-circuitpython-ssd1306
+circuitpython-rgb-display
 coverage
+pihole
+pillow
 psutil
 pylint
 pytest
 requests
+spidev
