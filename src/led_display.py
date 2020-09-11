@@ -24,10 +24,12 @@ from observer import Observer, Subject
 class MODE(Enum):
     """ Different View Modes """
     CLEAR = 0
-    BOOT = 1
+    INTRO = 1
     CYCLE = 2
     PROGRESS = 3
     WARNING = 4
+    MESSAGE = 5
+    CONNECTION = 6
 
 
 class Display(Observer, threading.Thread):
@@ -61,6 +63,11 @@ class Display(Observer, threading.Thread):
 
         self.current_state = 0
         self.pihole_stats = {}
+
+        ##
+        # Load gif animations into this list
+        self.animation = []
+        self.load_intro()
 
         self.init_fonts()
         self.init_pihole_stats()
@@ -142,6 +149,9 @@ class Display(Observer, threading.Thread):
         self.font_offset = 0
         self.icon_font_offset = -4
 
+    def load_intro(self):
+        self.load_gif_animation('intro.gif')
+
     def update_pihole_stats(self):
         """ Updates global pihole variables """
 
@@ -158,7 +168,7 @@ class Display(Observer, threading.Thread):
 
     def config_for_mode(self, mode: MODE):
         config = {}
-        if MODE.BOOT:
+        if MODE.INTRO:
             pass
         elif MODE.CLEAR:
             pass
@@ -225,6 +235,35 @@ class Display(Observer, threading.Thread):
         """ Loads bitmap / png icons by name from the 'icons' folder """
         img = Image.open(os.path.join('icons', name), mode='r').resize(size).convert('1')
         return img
+
+    def iter_frames_of_gif(self, gif):
+        try:
+            i= 0
+            while True:
+                gif.seek(i)
+                imframe = gif.copy()
+                if i == 0:
+                    palette = imframe.getpalette()
+                else:
+                    imframe.putpalette(palette)
+                yield imframe
+                i += 1
+        except EOFError as exc:
+            print(exc)
+
+    def load_gif_animation(self, name, size=None):
+        gifs_directory = 'anim'
+        self.animation = []
+        try:
+            for frame in self.iter_frames_of_gif(Image.open(os.path.join(gifs_directory, name), mode='r')):
+                if size is None:
+                    # load without resizing
+                    self.animation.append(frame.convert('1'))
+                else:
+                    self.animation.append(frame.resize(size).convert('1'))
+
+        except FileNotFoundError as exc:
+            print(exc)
 
     def clear_display(self, fill=0, refresh=False):
         """  Clear display """
@@ -413,6 +452,38 @@ class Display(Observer, threading.Thread):
             #                     fill=0,
             #                     outline=1)
 
+    def draw_intro_view(self, tick=0):
+        # print(len(self.animation))
+        self.draw.bitmap((0,0),self.animation[tick],fill=1)
+
+    def draw_connection_view(self, tick=0):
+        connection_established = self.current_message_dict['established']
+        connection_attempts = self.current_message_dict['attempt_count']
+        messages = self.current_message_dict['messages']
+        m1 = messages[0]
+        m2 = messages[1]
+        m3 = messages[2]
+        m4 = '{}'.format(connection_attempts)
+
+        self.draw.text((0, self.font_offset),
+                        '{}'.format(m1),
+                        font=self.small_font,
+                        fill=255)
+
+        self.draw.text((0, self.font_offset + self.small_font_size),
+                        '{}'.format(m2),
+                        font=self.small_font,
+                        fill=255)
+
+        self.draw.text((0, self.font_offset + self.small_font_size*2),
+                        '{}'.format(m3),
+                        font=self.small_font,
+                        fill=255)
+
+        self.draw.text((0, self.font_offset + self.small_font_size*3),
+                        '{}'.format(m4),
+                        font=self.small_font,
+                        fill=255)
 
     def draw_blocked_stats(self, tick=0):
         """ Generates frame of blocked state for provided tick """
@@ -682,14 +753,16 @@ class Display(Observer, threading.Thread):
                                     outline=1,
                                     fill=255)
 
-            elif self.current_mode is MODE.BOOT:
-                pass
+            elif self.current_mode is MODE.INTRO:
+                self.draw_intro_view(tick=tick)
             elif self.current_mode is MODE.CLEAR:
                 pass
             elif self.current_mode is MODE.PROGRESS:
                 self.draw_progress_view(tick=tick)
             elif self.current_mode is MODE.WARNING:
                 pass
+            elif self.current_mode is MODE.CONNECTION:
+                self.draw_connection_view(tick=tick)
 
             # Display image.
             self.display.image(self.image)
