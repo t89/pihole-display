@@ -14,25 +14,26 @@ cd $DIR
 # git fetch --all
 # git reset --hard origin/master
 
-while : ; do
-    # Check if we are connected to the internet
-    # Connection status is set to 0 ONLY if ping was successful
-    echo "Checking connection"
-    connection_status=$(ping -c 1 -q google.com >&/dev/null; echo $?)
-    echo "Status (should be 0): $connection_status"
+# Disable temporarily in favour of python network management
+# while : ; do
+#     # Check if we are connected to the internet
+#     # Connection status is set to 0 ONLY if ping was successful
+#     echo "Checking connection"
+#     connection_status=$(ping -c 1 -q google.com >&/dev/null; echo $?)
+#     echo "Status (should be 0): $connection_status"
 
-    # Break endless loop if connection is found
-    if [ $connection_status -eq 0 ]; then
-        echo "Connection found"
-        break
-    fi
+#     # Break endless loop if connection is found
+#     if [ $connection_status -eq 0 ]; then
+#         echo "Connection found"
+#         break
+#     fi
 
-    echo "No connection found, initializing WPS"
-    sudo bash "./utility/wps_config.sh"
+#     echo "No connection found, initializing WPS"
+#     sudo bash "./utility/wps_config.sh"
 
-    echo "15 seconds pause before rechecking"
-    sleep 15
-done
+#     echo "15 seconds pause before rechecking"
+#     sleep 15
+# done
 
 git stash
 
