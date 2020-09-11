@@ -67,6 +67,7 @@ class Display(Observer, threading.Thread):
         ##
         # Load gif animations into this list
         self.animation = []
+        self.animation_tick = 0
         self.load_intro()
 
         self.init_fonts()
@@ -150,6 +151,7 @@ class Display(Observer, threading.Thread):
         self.icon_font_offset = -4
 
     def load_intro(self):
+        # self.load_gif_animation('intro.gif', size=(32, 32))
         self.load_gif_animation('intro.gif')
 
     def update_pihole_stats(self):
@@ -249,7 +251,7 @@ class Display(Observer, threading.Thread):
                 yield imframe
                 i += 1
         except EOFError as exc:
-            print(exc)
+            pass
 
     def load_gif_animation(self, name, size=None):
         gifs_directory = 'anim'
@@ -431,16 +433,16 @@ class Display(Observer, threading.Thread):
 
         if (progress_label_1 is not None):
             self.draw.text((offset, self.font_offset),
-                            '{}'.format(progress_label_1),
-                            font=self.small_font,
-                            fill=255)
+                           '{}'.format(progress_label_1),
+                           font=self.small_font,
+                           fill=255)
 
         if (progress_label_2 is not None):
             # 1+ to put gap between chip animation
             self.draw.text((offset, 1 + self.font_offset+3*self.small_font_size),
-                            '{}'.format(progress_label_2),
-                            font=self.small_font,
-                            fill=255)
+                           '{}'.format(progress_label_2),
+                           font=self.small_font,
+                           fill=255)
 
 
         self.draw_chip(pos=(0, 0), percentage=percentage, tick=tick)
@@ -454,7 +456,22 @@ class Display(Observer, threading.Thread):
 
     def draw_intro_view(self, tick=0):
         # print(len(self.animation))
-        self.draw.bitmap((0,0),self.animation[tick],fill=1)
+        frame_count = len(self.animation)
+
+        frame_size = self.animation[0].size
+        position = ((self.width - frame_size[0])/2,
+                    (self.height - frame_size[1])/2)
+
+        # white background
+        # self.clear_display(fill=1)
+        # self.draw.rectangle((position[0],
+        #                      position[1],
+        #                      position[0] + frame_size[0],
+        #                      position[1] + frame_size[1]),
+        #                     outline=0, fill=1)
+
+        self.draw.bitmap(position, self.animation[self.animation_tick], fill=1)
+        self.animation_tick = (self.animation_tick + 1) % frame_count
 
     def draw_connection_view(self, tick=0):
         connection_established = self.current_message_dict['established']

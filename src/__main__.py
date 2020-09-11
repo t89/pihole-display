@@ -19,10 +19,10 @@ def check_progress_mode(hk):
     for i in range (1, 100):
         percentage = 1.0/100.0*i
         hk.loading_mode(activity_name='UPDATING',
-                                 activity_detail='FIRMWARE',
-                                 percentage=percentage,
-                                 activity_name_finished='UPDATE',
-                                 activity_detail_finished='FINISHED')
+                        activity_detail='FIRMWARE',
+                        percentage=percentage,
+                        activity_name_finished='UPDATE',
+                        activity_detail_finished='FINISHED')
         # print(percentage)
         sleep(0.2)
 
@@ -36,22 +36,26 @@ def check_cycle_mode(hk):
     hk.cycle_mode()
 
 def check_connection_mode(hk):
-    WPS_MESSAGES_DEFAULT = ['NO CONNECTION', 'PRESS WPS BUTTON', 'ON YOUR ROUTER']
-    WPS_MESSAGES_CONFIG_RESET = ['NO CONNECTION', 'NO WPS FOUND', 'RESET CONFIG']
+    WPS_MESSAGES_DEFAULT = ['NO CONNECTION',
+                            'PRESS WPS BUTTON',
+                            'ON YOUR ROUTER']
+    WPS_MESSAGES_CONFIG_RESET = ['NO CONNECTION',
+                                 'NO WPS FOUND',
+                                 'RESET CONFIG']
 
     for idx in range(1,16):
         if idx < 8:
             hk.connection_mode(established=False,
-                                    attempt_count=idx,
-                                    messages=WPS_MESSAGES_DEFAULT)
+                               attempt_count=idx,
+                               messages=WPS_MESSAGES_DEFAULT)
         elif idx < 10:
             hk.connection_mode(established=False,
-                                    attempt_count=idx,
-                                    messages=WPS_MESSAGES_CONFIG_RESET)
+                               attempt_count=idx,
+                               messages=WPS_MESSAGES_CONFIG_RESET)
         elif idx > 10 and idx < 15:
             hk.connection_mode(established=False,
-                                    attempt_count=idx,
-                                    messages=WPS_MESSAGES_DEFAULT)
+                               attempt_count=idx,
+                               messages=WPS_MESSAGES_DEFAULT)
         sleep(5)
 
 
@@ -68,15 +72,15 @@ def main():
         # display.daemon = True
         display.start()
 
+        housekeeper.boot()
+
         # housekeeper.clear_mode()
         # housekeeper.cycle_mode()
 
         # check_cycle_mode(housekeeper)
         # check_connection_mode(housekeeper)
-        check_intro_mode(housekeeper)
+        # check_intro_mode(housekeeper)
         # check_progress_mode(housekeeper)
-
-        # housekeeper.boot()
 
 
     except KeyboardInterrupt:

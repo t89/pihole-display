@@ -12,6 +12,11 @@ class PIHOLE_MODULE(Enum):
     FTL = 1
     WEB = 2
 
+class MESSAGE_TYPE(Enum):
+    INFO = 0
+    WARNING = 1
+    ERROR = 2
+
 class Housekeeper(Subject):
 
     # _mode: int = 0
@@ -53,7 +58,9 @@ class Housekeeper(Subject):
         self.cmd('sudo reboot')
 
     def connection_check_with_wps(self):
-        """ """
+        """ Checks if no internet and no wifi connections exist. If non are available,
+        attempts WPS every 15 seconds for 15 times before rebooting. Will copy the backup
+        configuration after 10 attempts  """
         WPS_MESSAGES_DEFAULT = ['NO CONNECTION', 'PRESS WPS BUTTON', 'ON YOUR ROUTER']
         WPS_MESSAGES_CONFIG_RESET = ['NO CONNECTION', 'NO WPS FOUND', 'RESET CONFIG']
         used_wps = False
@@ -67,7 +74,7 @@ class Housekeeper(Subject):
                 self.connection_mode(established=False,
                                      attempt_count=counter,
                                      messages=WPS_MESSAGES_DEFAULT)
-            elif counter < 10:
+            elif counter <= 10:
                 self.connection_mode(established=False,
                                      attempt_count=counter,
                                      messages=WPS_MESSAGES_CONFIG_RESET)
@@ -126,6 +133,7 @@ class Housekeeper(Subject):
         # -> It is missing if no password is set
         if not self.network_manager.api_available():
             # display message that user should use setup a password in web interface
+            self.message_mode()
             print('No API Token available. No web password set?')
 
         self.network_manager.api_test()
@@ -158,10 +166,16 @@ class Housekeeper(Subject):
     def clear_mode(self):
         self.switch_mode(MODE.CLEAR)
 
-    def warning_mode(self):
-        self.switch_mode(MODE.WARNING)
+    def message_mode(self, message_type: MESSAGE_TYPE=MESSAGE_TYPE.INFO):
+        self.current_message_dict = {'type': message_type,
+                                     'messages':[]}
+        if message_type == MESSAGE_TYPE.INFO:
+            pass
+        elif message_type == MESSAGE_TYPE.WARNING:
+            pass
+        elif message_type == MESSAGE_TYPE.ERROR:
+            pass
 
-    def message_mode(self):
         self.switch_mode(MODE.MESSAGE)
 
     def cycle_mode(self):
