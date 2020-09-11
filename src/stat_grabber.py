@@ -15,6 +15,8 @@ import json
 
 from datetime import datetime
 
+from network import NetworkManager
+
 class StatGrabber():
 
     def __init__(self):
@@ -24,6 +26,8 @@ class StatGrabber():
         self.weather = {'connection': False}
         self.last_weather_check = time.time() - 9999
         self.load_weather()
+
+        self.network_manager = NetworkManager.get_instance()
 
     # Shell scripts for system monitoring from here:
     # https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
@@ -84,7 +88,92 @@ class StatGrabber():
         return client_id
 
     def refresh_pihole_stats(self):
-        stats = {}
+        # if self.network_manager.api_available:
+        ##
+        # TODO:
+        if False:
+            # pihole_data = self.network_manager.pihole_stats()
+            # v_dict = pihole_data['version']
+            # s_dict = pihole_data['stats']
+
+            # stats = {'api': True}
+
+            # try:
+            #     stats['version_core'] = v_dict.core_current
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['version_core'] = ''
+
+            # try:
+            #     stats['version_web'] = v_dict.web_current
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['version_web'] = ''
+
+            # try:
+            #     stats['version_ftl'] = v_dict.ftl_current
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['version_ftl'] = ''
+
+            # try:
+            #     stats['hostname'] = v_dict
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['hostname'] = ''
+
+            # try:
+            #     stats['uptime'] = raw_stat_list[raw_stat_list.index('Uptime:')+1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['uptime'] = ''
+
+            # try:
+            #     stats['status'] = raw_stat_list[raw_stat_list.index('Pi-hole:')+1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['status'] = ''
+
+            # try:
+            #     stats['known_client_count'] = raw_stat_list[raw_stat_list.index('(Leased:')+1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['known_client_count'] = ''
+
+            # try:
+            #     stats['today_percentage'] = raw_stat_list[raw_stat_list.index('Today:')+1][:-1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['today_percentage'] = ''
+
+            # try:
+            #     stats['blocking'] = raw_stat_list[raw_stat_list.index('(Blocking:')+1]
+            # except ValueError as exc:
+            #     stats['blocking'] = ''
+            #     print(exc)
+
+            # try:
+            #     stats['ratio'] = (raw_stat_list[raw_stat_list.index('(Total:')+1],
+            #                     raw_stat_list[raw_stat_list.index('(Total:')+3])
+            # except ValueError as exc:
+            #     stats['ratio'] = ''
+            #     print(exc)
+
+            # try:
+            #     stats['topclient'] = self.check_replace_known_client(raw_stat_list[raw_stat_list.index('Client:')+1])
+            # except ValueError as exc:
+            #     stats['topclient'] = ''
+            #     print(exc)
+
+            # self.stats = stats
+            pass
+        else:
+            self.refresh_pihole_stats_no_api_access()
+
+
+
+    def refresh_pihole_stats_no_api_access(self):
+        stats = {'api': True}
         cmd = "pihole -c -e"
         stat_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
         # print(stat_string)
