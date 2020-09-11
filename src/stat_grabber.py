@@ -25,7 +25,7 @@ class StatGrabber():
 
         self.weather = {'connection': False}
         self.last_weather_check = time.time() - 9999
-        self.load_weather()
+        # self.load_weather()
 
         self.network_manager = NetworkManager.get_instance()
 
@@ -298,7 +298,7 @@ class StatGrabber():
             # 'windspeedMiles': '11'
 
             self.weather = current_condition[0]
-        except ValueError as exc:
+        except (ValueError, ConnectionError) as exc:
             # JSONDecodeError, which is used by simplejson, is a subclass of ValueError
             print(exc)
             self.weather['connection'] = False
