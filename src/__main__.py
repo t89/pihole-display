@@ -77,7 +77,7 @@ def main():
         # housekeeper.clear_mode()
         # housekeeper.cycle_mode()
 
-        # check_cycle_mode(housekeeper)
+        check_cycle_mode(housekeeper)
         # check_connection_mode(housekeeper)
         # check_intro_mode(housekeeper)
         # check_progress_mode(housekeeper)
