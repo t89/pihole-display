@@ -66,8 +66,7 @@ class Housekeeper(Subject):
         used_wps = False
         counter = 1
 
-
-        while (not self.network_manager.check_internet_connection and not self.network_manager.check_wifi_connection_via_arp_cache()):
+        while ((self.network_manager.check_internet_connection() is False) and (self.network_manager.check_wifi_connection_via_arp_cache() is False)):
             # We have neither internet nor neighbours in arp cache
 
             if counter < 8:
