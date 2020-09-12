@@ -48,12 +48,18 @@ class NetworkManager():
         # -i = interface name
         # -c = path to configuration file
 
+        # Shut down currently running wpa_supplicant
         cmd_kill_wpa='''killall -q wpa_supplicant'''
-        cmd = '''wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
+        # Restart wpa_supplicant with correct config and driver
+        cmd_fix_driver = '''wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
+        # Attempt WPS connection
+        cmd_use_wps='''sudo wpa_cli -iwlan0 wps_pbc'''
 
         print(self.cmd(cmd_kill_wpa))
         sleep(3)
-        print(self.cmd(cmd))
+        print(self.cmd(cmd_fix_driver))
+        print(self.cmd(cmd_use_wps))
+        sleep(10)
 
     def connect_wifi_post_wps(self):
         # -B = Background
