@@ -83,7 +83,8 @@ class Housekeeper(Subject):
                                      messages=WPS_MESSAGES_DEFAULT)
             else:
                 # reboot tut gut
-                self.reboot()
+                # self.reboot()
+                pass
 
             used_wps = True
             self.network_manager.initiate_wps()
@@ -92,6 +93,8 @@ class Housekeeper(Subject):
 
             if counter == 10:
                 self.network_manager.reset_wpa_supplicant()
+            if counter >= 15:
+                self.network_manager.reset_wpa_supplicant_develop()
 
         if used_wps:
             # wps connection was established without the wext driver. Use the wext driver from now on

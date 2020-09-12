@@ -59,6 +59,20 @@ class NetworkManager():
         cmd = '''wpa_supplicant -B w -D wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
         print(self.cmd(cmd))
 
+    def reset_wpa_supplicant_develop(self):
+        import datetime
+        timestamp_string = str(datetime.datetime.now).replace(':', '').replace('-', '')
+        original_name = 'wpa_supplicant.conf'
+        replacement_name = 'wpa_supplicant_{}'.format(timestamp_string)
+
+        # do not delete, but rename original wpa_supplicant.conf
+        cmd_1 = '''sudo mv /etc/wpa_supplicant/{} /etc/wpa_supplicant/{}'''.format(original_name, replacement_name)
+        cmd_2 = '''sudo cp /etc/wpa_supplicant/wpa_supplicant_backup.conf /etc/wpa_supplicant/wpa_supplicant.conf'''
+        print('Rename original wpa_supplicant:\n{} -> {}'.format(original_name, replacement_name))
+        print(self.cmd(cmd_1))
+        print('Copy WPS compatible backup config to /etc/wpa_supplicant/wpa_supplicant.conf')
+        print(self.cmd(cmd_2))
+
     def reset_wpa_supplicant(self):
         """ Rename the current wpa_supplicant.conf file and copy a wps-compatible file as a replacement """
 
