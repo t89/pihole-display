@@ -47,7 +47,7 @@ class NetworkManager():
         # -i = interface name
         # -c = path to configuration file
 
-        cmd = '''wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant_wps.conf'''
+        cmd = '''wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
         print(self.cmd(cmd))
 
     def connect_wifi_post_wps(self):
