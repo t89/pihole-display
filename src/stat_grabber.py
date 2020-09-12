@@ -265,46 +265,55 @@ class StatGrabber():
 
         try:
             response = requests.get(url)
-            ##
-            # Note to myself: response.text is not a function, while response.json() is
-            complete_weather_dict = response.json()
-            current_condition = complete_weather_dict['current_condition']
-            # nearest_area = complete_weather_dict['nearest_area']
-            # request =  complete_weather_dict['request']
-
-            # weather =  complete_weather_dict['weather']
-            # hourly = weather[0]['hourly']
-
-            ##
-            # current_condition
-            # 'FeelsLikeC': '19',
-            # 'FeelsLikeF': '66',
-            # 'cloudcover': '0',
-            # 'humidity': '100',
-            # 'localObsDateTime': '2020-09-01 08:47 PM',
-            # 'observation_time': '01:47 AM',
-            # 'precipMM': '1.2',
-            # 'pressure': '998',
-            # 'temp_C': '19',
-            # 'temp_F': '66',
-            # 'uvIndex': '4',
-            # 'visibility': '16',
-            # 'weatherCode': '113',
-            # 'weatherDesc': [{'value': 'Sunny'}],
-            # 'weatherIconUrl': [{'value': ''}],
-            # 'winddir16Point': 'W',
-            # 'winddirDegree': '280',
-            # 'windspeedKmph': '17',
-            # 'windspeedMiles': '11'
-
-            self.weather = current_condition[0]
-        except (ValueError, ConnectionError) as exc:
-            # JSONDecodeError, which is used by simplejson, is a subclass of ValueError
+        except ConnectionError as exc:
             print(exc)
+            response = None
             self.weather['connection'] = False
-        else:
-            # if no exception
-            self.weather['connection'] = True
+
+        ##
+        # TODO: Inelegant solution. This is a hotfix
+        if response is not None:
+            try:
+                ##
+                # Note to myself: response.text is not a function, while response.json() is
+                complete_weather_dict = response.json()
+                current_condition = complete_weather_dict['current_condition']
+                # nearest_area = complete_weather_dict['nearest_area']
+                # request =  complete_weather_dict['request']
+
+                # weather =  complete_weather_dict['weather']
+                # hourly = weather[0]['hourly']
+
+                ##
+                # current_condition
+                # 'FeelsLikeC': '19',
+                # 'FeelsLikeF': '66',
+                # 'cloudcover': '0',
+                # 'humidity': '100',
+                # 'localObsDateTime': '2020-09-01 08:47 PM',
+                # 'observation_time': '01:47 AM',
+                # 'precipMM': '1.2',
+                # 'pressure': '998',
+                # 'temp_C': '19',
+                # 'temp_F': '66',
+                # 'uvIndex': '4',
+                # 'visibility': '16',
+                # 'weatherCode': '113',
+                # 'weatherDesc': [{'value': 'Sunny'}],
+                # 'weatherIconUrl': [{'value': ''}],
+                # 'winddir16Point': 'W',
+                # 'winddirDegree': '280',
+                # 'windspeedKmph': '17',
+                # 'windspeedMiles': '11'
+
+                self.weather = current_condition[0]
+            except ValueError as exc:
+                # JSONDecodeError, which is used by simplejson, is a subclass of ValueError
+                print(exc)
+                self.weather['connection'] = False
+            else:
+                # if no exception
+                self.weather['connection'] = True
 
     def load_weather(self):
         self.last_weather_check = time.time()
