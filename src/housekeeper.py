@@ -99,6 +99,7 @@ class Housekeeper(Subject):
         if used_wps:
             # wps connection was established without the wext driver. Use the wext driver from now on
             self.network_manager.connect_wifi_post_wps()
+            self.network_manager.restart_wifi_interface()
 
     def display_update(self):
         did_update=False

@@ -2,6 +2,7 @@ import asyncio
 import socket
 import subprocess
 import aiohttp
+from time import sleep
 
 # from wireless import Wireless
 
@@ -47,7 +48,11 @@ class NetworkManager():
         # -i = interface name
         # -c = path to configuration file
 
+        cmd_kill_wpa='''killall -q wpa_supplicant'''
         cmd = '''wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
+
+        print(self.cmd(cmd_kill_wpa))
+        sleep(3)
         print(self.cmd(cmd))
 
     def connect_wifi_post_wps(self):
@@ -56,8 +61,23 @@ class NetworkManager():
         # -i = interface name
         # -D = Driver
         # -c = path to configuration file
+
+        cmd_kill_wpa='''killall -q wpa_supplicant'''
         cmd = '''wpa_supplicant -B w -D wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
+
+        print(self.cmd(cmd_kill_wpa))
+        sleep(3)
         print(self.cmd(cmd))
+
+    def restart_wifi_interface(self):
+        # Stop existing WPA_Supplicant Process with Old Config
+        print(self.cmd('killall -q wpa_supplicant'))
+        sleep(3)
+
+        # restart wlan0 interface
+        print(self.cmd('sudo ip link set wlan0 down'))
+        sleep(1)
+        print(self.cmd('sudo ip link set wlan0 up'))
 
     def reset_wpa_supplicant_develop(self):
         import datetime
