@@ -61,7 +61,7 @@ class NetworkManager():
 
     def reset_wpa_supplicant_develop(self):
         import datetime
-        timestamp_string = str(datetime.datetime.now()).replace(':', '').replace('-', '')
+        timestamp_string = str(datetime.datetime.now()).replace(':', '').replace('-', '').replace(' ', '')
         original_name = 'wpa_supplicant.conf'
         replacement_name = 'wpa_supplicant_{}'.format(timestamp_string)
 
@@ -77,7 +77,7 @@ class NetworkManager():
         """ Rename the current wpa_supplicant.conf file and copy a wps-compatible file as a replacement """
 
         import datetime
-        timestamp_string = str(datetime.datetime.now()).replace(':', '').replace('-', '')
+        timestamp_string = str(datetime.datetime.now()).replace(':', '').replace('-', '').replace(' ', '')
         original_name = 'wpa_supplicant.conf'
         replacement_name = 'wpa_supplicant_{}'.format(timestamp_string)
 
