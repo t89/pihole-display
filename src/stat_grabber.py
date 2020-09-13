@@ -265,7 +265,7 @@ class StatGrabber():
 
         try:
             response = requests.get(url)
-        except ConnectionError as exc:
+        except (requests.ConnectionError, requests.RequestException, requests.Timeout) as exc:
             print(exc)
             response = None
             self.weather['connection'] = False
