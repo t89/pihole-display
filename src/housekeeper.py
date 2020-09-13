@@ -63,7 +63,6 @@ class Housekeeper(Subject):
         configuration after 10 attempts  """
         WPS_MESSAGES_DEFAULT = ['NO CONNECTION', 'PRESS WPS BUTTON', 'ON YOUR ROUTER']
         WPS_MESSAGES_CONFIG_RESET = ['NO CONNECTION', 'NO WPS FOUND', 'RESET CONFIG']
-        used_wps = False
         counter = 1
 
         while ((self.network_manager.check_internet_connection() is False) and (self.network_manager.check_wifi_connection_via_arp_cache() is False)):
@@ -86,11 +85,11 @@ class Housekeeper(Subject):
                 # self.reboot()
                 pass
 
-            used_wps = True
             is_connected = self.network_manager.initiate_wps()
             if is_connected:
                 # Break this loop
                 print('This was a triumph!')
+                self.network_manager.restart_wifi_interface()
                 break
             sleep(5)
             counter = counter + 1
@@ -100,10 +99,9 @@ class Housekeeper(Subject):
             if counter >= 15:
                 self.network_manager.reset_wpa_supplicant_develop()
 
-        if used_wps:
+        # if used_wps:
             # wps connection was established without the wext driver. Use the wext driver from now on
-            self.network_manager.connect_wifi_post_wps()
-            self.network_manager.restart_wifi_interface()
+            # self.network_manager.connect_wifi_post_wps()
 
     def display_update(self):
         did_update=False
