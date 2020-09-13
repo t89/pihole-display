@@ -25,7 +25,7 @@ class StatGrabber():
 
         self.weather = {'connection': False}
         self.last_weather_check = time.time() - 9999
-        # self.load_weather()
+        self.load_weather()
 
         self.network_manager = NetworkManager.get_instance()
 
@@ -316,6 +316,14 @@ class StatGrabber():
                 self.weather['connection'] = True
 
     def load_weather(self):
+        ##
+        # TODO: Temporary workaround for uncaught weather exception
+        # if the connection is down. Line 267 requests.exceptions.ConnectionError:
+        # max retries exceeded caused by NewConnectionError
+        if not self.network_manager.check_internet_connection():
+            self.weather['connection'] = False
+            return
+
         self.last_weather_check = time.time()
 
         ##
