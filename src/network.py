@@ -55,7 +55,7 @@ class NetworkManager():
         # Restart wpa_supplicant with correct config and driver
         cmd_fix_driver = '''wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
         # Attempt WPS connection
-        cmd_use_wps ='''sudo wpa_cli -iwlan0 wps_pbc'''
+        cmd_use_wps = '''sudo wpa_cli -iwlan0 wps_pbc'''
 
         print('Shutdown current wpa_supplicant instance:')
         print(self.cmd(cmd_kill_wpa))
@@ -72,7 +72,6 @@ class NetworkManager():
             # wps command execution was successful
             # check if the results have been positive
             return self.check_wps_success()
-
         return False
 
     def check_wps_success(self):
@@ -133,6 +132,12 @@ class NetworkManager():
         print(self.cmd('sudo ip link set wlan0 down'))
         time.sleep(1)
         print(self.cmd('sudo ip link set wlan0 up'))
+
+        ##
+        # Old-school alternative
+        # self.cmd('sudo wpa_action wlan0 stop')
+        # self.cmd('sudo wpa_action wlan0 reload')
+        # self.cmd('/sbin/ifup wlan0')
 
     def reset_wpa_supplicant_develop(self):
         import datetime
