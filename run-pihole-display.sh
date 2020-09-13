@@ -35,17 +35,17 @@ cd $DIR
 #     sleep 15
 # done
 
-git stash
+# git stash
 
-if [ -f "$DIR/.develop" ]; then
-    # use develop version instead of master
-    git checkout develop
-    git pull origin develop
-else
-    # use release version
-    git checkout master
-    git pull origin master
-fi
+# if [ -f "$DIR/.develop" ]; then
+#     # use develop version instead of master
+#     git checkout develop
+#     git pull origin develop
+# else
+#     # use release version
+#     git checkout master
+#     git pull origin master
+# fi
 
 # Run display software in background
 python3 "$DIR/src/__main__.py" &
