@@ -30,6 +30,7 @@ class MODE(Enum):
     WARNING = 4
     MESSAGE = 5
     CONNECTION = 6
+    REBOOT = 7
 
 
 class Display(Observer, threading.Thread):
@@ -475,32 +476,52 @@ class Display(Observer, threading.Thread):
 
     def draw_connection_view(self, tick=0):
         connection_established = self.current_message_dict['established']
+        state = self.current_message_dict['state']
         connection_attempts = self.current_message_dict['attempt_count']
         messages = self.current_message_dict['messages']
         m1 = messages[0]
         m2 = messages[1]
-        m3 = messages[2]
-        m4 = '{}'.format(connection_attempts)
+        # m3 = messages[2]
+        # m4 = '{}'.format(connection_attempts)
+
+        if (state == 0):
+            # Attempt State
+            self.draw.text((0, self.font_offset),
+                            '{}'.format(m1),
+                            font=self.half_font,
+                            fill=255)
+
+            self.draw.text((0, self.font_offset + self.small_font_size*2),
+                            '{}'.format(m2),
+                            font=self.small_font,
+                            fill=255)
+
+        elif (state == 1):
+            # Press WPS Button state
+            self.draw.text((0, self.font_offset),
+                            '{}'.format(m1),
+                            font=self.small_font,
+                            fill=255)
+
+            self.draw.text((0, self.font_offset + self.small_font_size*2),
+                            '{}'.format(m2),
+                            font=self.small_font,
+                            fill=255)
+
+    def draw_reboot_view(self, tick=0):
+        reboot_notification = 'Reboot'
+        time_string = 'since: {}'.format(self.stat_grabber.get_time())
 
         self.draw.text((0, self.font_offset),
-                        '{}'.format(m1),
-                        font=self.small_font,
-                        fill=255)
-
-        self.draw.text((0, self.font_offset + self.small_font_size),
-                        '{}'.format(m2),
-                        font=self.small_font,
-                        fill=255)
-
-        self.draw.text((0, self.font_offset + self.small_font_size*2),
-                        '{}'.format(m3),
-                        font=self.small_font,
+                        '{}'.format(reboot_notification),
+                        font=self.half_font,
                         fill=255)
 
         self.draw.text((0, self.font_offset + self.small_font_size*3),
-                        '{}'.format(m4),
+                        '{}'.format(time_string),
                         font=self.small_font,
                         fill=255)
+
 
     def draw_blocked_stats(self, tick=0):
         """ Generates frame of blocked state for provided tick """
@@ -780,6 +801,8 @@ class Display(Observer, threading.Thread):
                 pass
             elif self.current_mode is MODE.CONNECTION:
                 self.draw_connection_view(tick=tick)
+            elif self.current_mode is MODE.REBOOT:
+                self.draw_reboot_view(tick=tick)
 
             # Display image.
             self.display.image(self.image)

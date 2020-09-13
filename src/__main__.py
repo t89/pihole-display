@@ -35,27 +35,36 @@ def check_progress_mode(hk):
 def check_cycle_mode(hk):
     hk.cycle_mode()
 
-def check_connection_mode(hk):
-    WPS_MESSAGES_DEFAULT = ['NO CONNECTION',
-                            'PRESS WPS BUTTON',
-                            'ON YOUR ROUTER']
-    WPS_MESSAGES_CONFIG_RESET = ['NO CONNECTION',
-                                 'NO WPS FOUND',
-                                 'RESET CONFIG']
+def check_reboot_mode(hk):
+    hk.reboot_mode()
 
-    for idx in range(1,16):
-        if idx < 8:
+def check_connection_mode(hk):
+    WPS_MESSAGES_STATE_1 = ['Press WPS button', 'on your router']
+    WPS_MESSAGES_CONFIG_RESET = ['Resetting Config', '']
+
+    for counter in range(1, 16):
+        WPS_MESSAGES_STATE_2 = ['Attempt:', '{}/15'.format(counter)]
+        state = counter % 2 == 1
+        if (state):
+            messages = WPS_MESSAGES_STATE_1
+        else:
+            messages = WPS_MESSAGES_STATE_2
+
+        if counter < 8:
             hk.connection_mode(established=False,
-                               attempt_count=idx,
-                               messages=WPS_MESSAGES_DEFAULT)
-        elif idx < 10:
+                               state=state,
+                               attempt_count=counter,
+                               messages=messages)
+        elif counter <= 10:
             hk.connection_mode(established=False,
-                               attempt_count=idx,
+                               state=state,
+                               attempt_count=counter,
                                messages=WPS_MESSAGES_CONFIG_RESET)
-        elif idx > 10 and idx < 15:
+        elif counter > 10 and counter < 15:
             hk.connection_mode(established=False,
-                               attempt_count=idx,
-                               messages=WPS_MESSAGES_DEFAULT)
+                               state=state,
+                               attempt_count=counter,
+                               messages=messages)
         sleep(5)
 
 
@@ -75,9 +84,10 @@ def main():
         housekeeper.boot()
 
         # housekeeper.clear_mode()
-        # housekeeper.cycle_mode()
+        housekeeper.cycle_mode()
 
-        check_cycle_mode(housekeeper)
+        # check_reboot_mode(housekeeper)
+        # check_cycle_mode(housekeeper)
         # check_connection_mode(housekeeper)
         # check_intro_mode(housekeeper)
         # check_progress_mode(housekeeper)

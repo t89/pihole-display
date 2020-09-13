@@ -55,53 +55,74 @@ class Housekeeper(Subject):
 
     def reboot(self):
         """ Reboots the machine """
+        self.reboot_mode()
+        sleep(1)
         self.cmd('sudo reboot')
 
     def connection_check_with_wps(self):
         """ Checks if no internet and no wifi connections exist. If non are available,
         attempts WPS every 15 seconds for 15 times before rebooting. Will copy the backup
         configuration after 10 attempts  """
-        WPS_MESSAGES_DEFAULT = ['NO CONNECTION', 'PRESS WPS BUTTON', 'ON YOUR ROUTER']
-        WPS_MESSAGES_CONFIG_RESET = ['NO CONNECTION', 'NO WPS FOUND', 'RESET CONFIG']
+
         counter = 1
+
+        WPS_MESSAGES_STATE_1 = ['Press WPS button', 'on your router']
+        WPS_MESSAGES_STATE_2 = ['Attempt:', '{}/15'.format(counter)]
+        WPS_MESSAGES_CONFIG_RESET = ['Resetting', 'Config']
+        WPS_MESSAGES_SUCCESS = ['Connected!', '']
 
         while ((self.network_manager.check_internet_connection() is False) and (self.network_manager.check_wifi_connection_via_arp_cache() is False)):
             # We have neither internet nor neighbours in arp cache
 
+            state = counter % 2 == 1
+            if (state):
+                messages = WPS_MESSAGES_STATE_1
+            else:
+                messages = WPS_MESSAGES_STATE_2
+
             if counter < 8:
                 self.connection_mode(established=False,
+                                     state=state,
                                      attempt_count=counter,
-                                     messages=WPS_MESSAGES_DEFAULT)
+                                     messages=messages)
             elif counter <= 10:
                 self.connection_mode(established=False,
+                                     state=1,
                                      attempt_count=counter,
                                      messages=WPS_MESSAGES_CONFIG_RESET)
-            elif counter > 10 and counter < 15:
+            elif counter > 10 and counter <= 15:
                 self.connection_mode(established=False,
+                                     state=state,
                                      attempt_count=counter,
-                                     messages=WPS_MESSAGES_DEFAULT)
+                                     messages=messages)
             else:
                 # reboot tut gut
-                # self.reboot()
-                pass
+                self.reboot()
 
             is_connected = self.network_manager.initiate_wps()
             if is_connected:
                 # Break this loop
+
                 print('This was a triumph!')
+                self.connection_mode(established=True,
+                                     state=1,
+                                     attempt_count=counter,
+                                     messages=WPS_MESSAGES_SUCCESS)
                 self.network_manager.restart_wifi_interface()
+                sleep(2)
                 ##
                 # This reboot is a workaround because the wifi interfaces do not properly
                 # boot up after the driver change. A reboot fixes this, is unelegant however
                 self.reboot()
                 break
             sleep(5)
-            counter = counter + 1
 
             if counter == 10:
                 self.network_manager.reset_wpa_supplicant()
             if counter >= 15:
                 self.network_manager.reset_wpa_supplicant_develop()
+
+            counter = counter + 1
 
         # if used_wps:
             # wps connection was established without the wext driver. Use the wext driver from now on
@@ -160,15 +181,17 @@ class Housekeeper(Subject):
     def intro_mode(self):
         self.switch_mode(MODE.INTRO)
 
-    def connection_mode(self, established=False, attempt_count=0, messages=''):
+    def connection_mode(self, established=False, state=0, attempt_count=0, messages=''):
         if self.mode is not MODE.CONNECTION:
             self.mode = MODE.CONNECTION
             self.current_message_dict = {'established': established,
+                                         'state': state,
                                          'attempt_count': attempt_count,
                                          'messages': messages}
             self.update()
         else:
             self.current_message_dict['established'] = established
+            self.current_message_dict['state'] = state
             self.current_message_dict['attempt_count'] = attempt_count
             self.current_message_dict['messages'] = messages
 
@@ -189,6 +212,9 @@ class Housekeeper(Subject):
 
     def cycle_mode(self):
         self.switch_mode(MODE.CYCLE)
+
+    def reboot_mode(self):
+        self.switch_mode(MODE.REBOOT)
 
     def loading_mode(self, activity_name=None, activity_detail=None, percentage=None, activity_name_finished=None, activity_detail_finished=None):
         if self.mode is not MODE.PROGRESS:
