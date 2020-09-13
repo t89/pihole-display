@@ -124,6 +124,17 @@ class NetworkManager():
         print(self.cmd(cmd))
 
     def restart_wifi_interface(self):
+        """ Reenables wlan0 interface """
+        # check if wlan0 is available in /etc/network/interfaces
+        cmd_check_ifwlan0 = '''grep -i '^auto wlan0' /etc/network/interfaces | wc -l'''
+        value = self.cmd(cmd_check_ifwlan0)
+        try:
+            if int(value) < 1:
+                cmd_magic = '''sed -i "s/#allow-hotplug wlan0/allow-hotplug wlan0/;s/#iface wlan0 inet dhcp/iface wlan0 inet dhcp/;s/#auto wlan0/auto wlan0/;s/#pre-up wpa_supplicant/pre-up wpa_supplicant/;s/#post-down killall -q wpa_supplicant/post-down killall -q wpa_supplicant/" /etc/network/interfaces'''
+                self.cmd(cmd_magic)
+        except ValueError as exc:
+            print(exc)
+
         # Stop existing WPA_Supplicant Process with Old Config
         print(self.cmd('killall -q wpa_supplicant'))
         time.sleep(3)
