@@ -90,6 +90,10 @@ class Housekeeper(Subject):
                 # Break this loop
                 print('This was a triumph!')
                 self.network_manager.restart_wifi_interface()
+                ##
+                # This reboot is a workaround because the wifi interfaces do not properly
+                # boot up after the driver change. A reboot fixes this, is unelegant however
+                self.reboot()
                 break
             sleep(5)
             counter = counter + 1
