@@ -11,8 +11,11 @@ import time
 import subprocess
 import requests
 import psutil
+import json
 
 from datetime import datetime
+
+from network import NetworkManager
 
 class StatGrabber():
 
@@ -20,9 +23,11 @@ class StatGrabber():
         self.encoding = 'utf-8'
         self.stats = {}
 
-        self.weather = {}
+        self.weather = {'connection': False}
         self.last_weather_check = time.time() - 9999
         self.load_weather()
+
+        self.network_manager = NetworkManager.get_instance()
 
     # Shell scripts for system monitoring from here:
     # https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
@@ -83,7 +88,92 @@ class StatGrabber():
         return client_id
 
     def refresh_pihole_stats(self):
-        stats = {}
+        # if self.network_manager.api_available:
+        ##
+        # TODO:
+        if False:
+            # pihole_data = self.network_manager.pihole_stats()
+            # v_dict = pihole_data['version']
+            # s_dict = pihole_data['stats']
+
+            # stats = {'api': True}
+
+            # try:
+            #     stats['version_core'] = v_dict.core_current
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['version_core'] = ''
+
+            # try:
+            #     stats['version_web'] = v_dict.web_current
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['version_web'] = ''
+
+            # try:
+            #     stats['version_ftl'] = v_dict.ftl_current
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['version_ftl'] = ''
+
+            # try:
+            #     stats['hostname'] = v_dict
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['hostname'] = ''
+
+            # try:
+            #     stats['uptime'] = raw_stat_list[raw_stat_list.index('Uptime:')+1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['uptime'] = ''
+
+            # try:
+            #     stats['status'] = raw_stat_list[raw_stat_list.index('Pi-hole:')+1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['status'] = ''
+
+            # try:
+            #     stats['known_client_count'] = raw_stat_list[raw_stat_list.index('(Leased:')+1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['known_client_count'] = ''
+
+            # try:
+            #     stats['today_percentage'] = raw_stat_list[raw_stat_list.index('Today:')+1][:-1]
+            # except ValueError as exc:
+            #     print(exc)
+            #     stats['today_percentage'] = ''
+
+            # try:
+            #     stats['blocking'] = raw_stat_list[raw_stat_list.index('(Blocking:')+1]
+            # except ValueError as exc:
+            #     stats['blocking'] = ''
+            #     print(exc)
+
+            # try:
+            #     stats['ratio'] = (raw_stat_list[raw_stat_list.index('(Total:')+1],
+            #                     raw_stat_list[raw_stat_list.index('(Total:')+3])
+            # except ValueError as exc:
+            #     stats['ratio'] = ''
+            #     print(exc)
+
+            # try:
+            #     stats['topclient'] = self.check_replace_known_client(raw_stat_list[raw_stat_list.index('Client:')+1])
+            # except ValueError as exc:
+            #     stats['topclient'] = ''
+            #     print(exc)
+
+            # self.stats = stats
+            pass
+        else:
+            self.refresh_pihole_stats_no_api_access()
+
+
+
+    def refresh_pihole_stats_no_api_access(self):
+        stats = {'api': True}
         cmd = "pihole -c -e"
         stat_string = subprocess.check_output(cmd, shell=True).decode(self.encoding)
         # print(stat_string)
@@ -91,68 +181,68 @@ class StatGrabber():
 
         try:
             stats['version_core'] = raw_stat_list[raw_stat_list.index('Core:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['version_core'] = ''
 
         try:
             stats['version_web'] = raw_stat_list[raw_stat_list.index('Web:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['version_web'] = ''
 
         try:
             stats['version_ftl'] = raw_stat_list[raw_stat_list.index('FTL:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['version_ftl'] = ''
 
         try:
             stats['hostname'] = raw_stat_list[raw_stat_list.index('Hostname:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['hostname'] = ''
 
         try:
             stats['uptime'] = raw_stat_list[raw_stat_list.index('Uptime:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['uptime'] = ''
 
         try:
             stats['status'] = raw_stat_list[raw_stat_list.index('Pi-hole:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['status'] = ''
 
         try:
             stats['known_client_count'] = raw_stat_list[raw_stat_list.index('(Leased:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['known_client_count'] = ''
 
         try:
             stats['today_percentage'] = raw_stat_list[raw_stat_list.index('Today:')+1][:-1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             print(exc)
             stats['today_percentage'] = ''
 
         try:
             stats['blocking'] = raw_stat_list[raw_stat_list.index('(Blocking:')+1]
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             stats['blocking'] = ''
             print(exc)
 
         try:
             stats['ratio'] = (raw_stat_list[raw_stat_list.index('(Total:')+1],
                               raw_stat_list[raw_stat_list.index('(Total:')+3])
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             stats['ratio'] = ''
             print(exc)
 
         try:
             stats['topclient'] = self.check_replace_known_client(raw_stat_list[raw_stat_list.index('Client:')+1])
-        except IndexError as exc:
+        except (ValueError, IndexError) as exc:
             stats['topclient'] = ''
             print(exc)
 
@@ -163,102 +253,82 @@ class StatGrabber():
         return self.stats
 
     def get_weather(self):
-        # every 5 minutes
-        if time.time() - self.last_weather_check >= 300:
+        # every 5 minutes, or whenever last query was unsuccessful
+        if (time.time() - self.last_weather_check >= 300) or not self.weather['connection']:
             self.load_weather()
-
         return self.weather
 
     def load_weather_for_location(self, location):
-        # c    Weather condition,
-        # C    Weather condition textual name,
-        # h    Humidity,
-        # t    Temperature (Actual),
-        # f    Temperature (Feels Like),
-        # w    Wind,
-        # l    Location,
-        # m    Moonphase 🌑🌒🌓🌔🌕🌖🌗🌘,
-        # M    Moonday,
-        # p    precipitation (mm),
-        # o    Probability of Precipitation,
-        # P    pressure (hPa),
+        """ Loads complete weather data as json input """
 
-        # D    Dawn*,
-        # S    Sunrise*,
-        # z    Zenith*,
-        # s    Sunset*,
-        # d    Dusk*.
-
-        weather_format_string = '%l,%C,%t,%h,%w,%p,%o,%P'
-        url = 'https://wttr.in/{}?format="{}"'.format(location, weather_format_string)
-
-
-        weather = {'status' : 'success',
-                    'location' : '',
-                    'condition' : '',
-                    'temperature' : '0',
-                    'humidity' : '0',
-                    'wind' : '0',
-                    'precipitation' : '0',
-                    'probability' : '0'}
+        url = 'https://wttr.in/{}?format={}'.format(location, 'j1')
 
         try:
             response = requests.get(url)
-            ##
-            # Note to myself: response.text is not a function, while response.json() is
-            weather_string = response.text
-        except subprocess.CalledProcessError as e:
-            print(e)
-            weather['status'] = str(e)
+        except ConnectionError as exc:
+            print(exc)
+            response = None
+            self.weather['connection'] = False
 
-        else:
-            # in case of no-exception
-
-            raw_weather_list = weather_string.split(',')
-
-            rwl_count = len(raw_weather_list)
-            if rwl_count == 0:
-                weather['status'] = 'empty'
-            elif rwl_count <= 2:
+        ##
+        # TODO: Inelegant solution. This is a hotfix
+        if response is not None:
+            try:
                 ##
-                # If an error happens it is the only response available
-                # e.g.: ['Unknown location; please try ~49.187089', '-97.937622\n']
-                weather['status'] = ' '.join(raw_weather_list).replace('\n', '')
+                # Note to myself: response.text is not a function, while response.json() is
+                complete_weather_dict = response.json()
+                current_condition = complete_weather_dict['current_condition']
+                # nearest_area = complete_weather_dict['nearest_area']
+                # request =  complete_weather_dict['request']
+
+                # weather =  complete_weather_dict['weather']
+                # hourly = weather[0]['hourly']
+
+                ##
+                # current_condition
+                # 'FeelsLikeC': '19',
+                # 'FeelsLikeF': '66',
+                # 'cloudcover': '0',
+                # 'humidity': '100',
+                # 'localObsDateTime': '2020-09-01 08:47 PM',
+                # 'observation_time': '01:47 AM',
+                # 'precipMM': '1.2',
+                # 'pressure': '998',
+                # 'temp_C': '19',
+                # 'temp_F': '66',
+                # 'uvIndex': '4',
+                # 'visibility': '16',
+                # 'weatherCode': '113',
+                # 'weatherDesc': [{'value': 'Sunny'}],
+                # 'weatherIconUrl': [{'value': ''}],
+                # 'winddir16Point': 'W',
+                # 'winddirDegree': '280',
+                # 'windspeedKmph': '17',
+                # 'windspeedMiles': '11'
+
+                self.weather = current_condition[0]
+            except ValueError as exc:
+                # JSONDecodeError, which is used by simplejson, is a subclass of ValueError
+                print(exc)
+                self.weather['connection'] = False
             else:
-                weather = {'location' : raw_weather_list[0],
-                        'condition' : raw_weather_list[1],
-                        'temperature' : raw_weather_list[2],
-                        'humidity' : raw_weather_list[3],
-                        'wind' : raw_weather_list[4],
-                        'precipitation' : raw_weather_list[5],
-                        'probability' : raw_weather_list[6].replace('\n','')}
-
-            # If value is empty string, replace with zero-string instead
-            if weather['temperature'] == '':
-                weather['temperature'] = '-'
-
-            if weather['humidity'] == '':
-                weather['humidity'] = '-'
-
-            if weather['wind'] == '':
-                weather['wind'] = '-'
-
-            if weather['probability'] == '':
-                weather['probability'] = '-'
-
-            if weather['precipitation'] == '':
-                weather['precipitation'] = '-'
-
-            weather['wind'] = self.replace_arrows_in_string(weather['wind'])
-
-            self.weather = weather
+                # if no exception
+                self.weather['connection'] = True
 
     def load_weather(self):
+        ##
+        # TODO: Temporary workaround for uncaught weather exception
+        # if the connection is down. Line 267 requests.exceptions.ConnectionError:
+        # max retries exceeded caused by NewConnectionError
+        if not self.network_manager.check_internet_connection():
+            self.weather['connection'] = False
+            return
+
         self.last_weather_check = time.time()
 
         ##
         # REFACTOR
-        HARD_CODED_BASE_PATH = '/home/pi/pihole-display/'
+        HARD_CODED_BASE_PATH = '/home/pi/pihole-display'
         location = ""
         with open('{}/location'.format(HARD_CODED_BASE_PATH), 'r', encoding='utf-8') as location_file:
             ##

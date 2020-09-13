@@ -29,15 +29,17 @@ sudo apt-get install net-tools
 sudo apt install python3-pip -y
 
 # Read system stats
-sudo pip3 install psutil
+# sudo pip3 install psutil # moved to requirements.txt
 
 # LED Display
 sudo apt-get install libtiff5 -y
 sudo apt-get install libopenjp2-7 -y
-sudo pip3 install --upgrade adafruit-circuitpython-ssd1306
+# sudo pip3 install --upgrade adafruit-circuitpython-ssd1306  # moved to requirements.txt
 
 #RGB Display
-sudo pip3 install --upgrade adafruit circuitpython-rgb-display
+# sudo pip3 install --upgrade adafruit circuitpython-rgb-display  # moved to requirements.txt
 
 # Both
-sudo pip3 install --upgrade adafruit-blinka spidev pillow
+# sudo pip3 install --upgrade adafruit-blinka spidev pillow  # moved to requirements.txt
+
+sudo pip3 install -r requirements.txt

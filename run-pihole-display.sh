@@ -14,25 +14,41 @@ cd $DIR
 # git fetch --all
 # git reset --hard origin/master
 
-git stash
+# Disable temporarily in favour of python network management
+# while : ; do
+#     # Check if we are connected to the internet
+#     # Connection status is set to 0 ONLY if ping was successful
+#     echo "Checking connection"
+#     connection_status=$(ping -c 1 -q google.com >&/dev/null; echo $?)
+#     echo "Status (should be 0): $connection_status"
 
-if [ -f "$DIR/.develop" ]; then
-    # use develop version instead of master
-    git checkout develop
-    git pull origin develop
-else
-    # use release version
-    git checkout master
-    git pull origin master
-fi
+#     # Break endless loop if connection is found
+#     if [ $connection_status -eq 0 ]; then
+#         echo "Connection found"
+#         break
+#     fi
 
-##
-# TEMPORARY:
-# Fix FTL Bug: https://github.com/pi-hole/PADD/issues/112#issuecomment-659540269
-echo "4711" | sudo tee /var/run/pihole-FTL.port
+#     echo "No connection found, initializing WPS"
+#     sudo bash "./utility/wps_config.sh"
+
+#     echo "15 seconds pause before rechecking"
+#     sleep 15
+# done
+
+# git stash
+
+# if [ -f "$DIR/.develop" ]; then
+#     # use develop version instead of master
+#     git checkout develop
+#     git pull origin develop
+# else
+#     # use release version
+#     git checkout master
+#     git pull origin master
+# fi
 
 # Run display software in background
-python3 "$DIR/src/led_display.py" >> "../pihole-display.log" &
+python3 "$DIR/src/__main__.py" &
 
 ##
 # Updating blocklists on the raspberry pi zero may take up to
