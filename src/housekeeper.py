@@ -223,7 +223,7 @@ class Housekeeper(Subject):
                                          'activity_detail': activity_detail,
                                          'activity_name_finished': activity_name_finished,
                                          'activity_detail_finished': activity_detail_finished,
-                                        'percentage': percentage}
+                                         'percentage': percentage}
             self.update()
         else:
             self.current_message_dict['activity_name'] = activity_name
