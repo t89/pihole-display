@@ -2,7 +2,8 @@ import asyncio
 import socket
 import subprocess
 import aiohttp
-from time import sleep
+from os import path
+import time
 
 # from wireless import Wireless
 
@@ -43,23 +44,71 @@ class NetworkManager():
     # WPS Connection
     # https://raspberrypi.stackexchange.com/a/80086/91158
     def initiate_wps(self):
+        """ Initiates and handles the whole wps connection process """
         # -B = Background
         # -w = ?
         # -i = interface name
         # -c = path to configuration file
 
         # Shut down currently running wpa_supplicant
-        cmd_kill_wpa='''killall -q wpa_supplicant'''
+        cmd_kill_wpa = '''killall -q wpa_supplicant'''
         # Restart wpa_supplicant with correct config and driver
         cmd_fix_driver = '''wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
         # Attempt WPS connection
-        cmd_use_wps='''sudo wpa_cli -iwlan0 wps_pbc'''
+        cmd_use_wps ='''sudo wpa_cli -iwlan0 wps_pbc'''
 
+        print('Shutdown current wpa_supplicant instance:')
         print(self.cmd(cmd_kill_wpa))
-        sleep(3)
+        time.sleep(3)
+
+        print('Restart wpa_supplicant with WEXT driver:')
         print(self.cmd(cmd_fix_driver))
-        print(self.cmd(cmd_use_wps))
-        sleep(10)
+
+        print('Attempt WPS Process:')
+        wps_command_feedback = self.cmd(cmd_use_wps)
+        time.sleep(10)
+
+        if 'ok' in wps_command_feedback.lower():
+            # wps command execution was successful
+            # check if the results have been positive
+            return self.check_wps_success()
+
+        return False
+
+    def check_wps_success(self):
+        """ Checks if the wps connection attempt was successful and returns bool """
+        ##
+        # Determining the success of the WPS connection attempt is kind of wonky:
+        # If the attempt was successful if our wpa_supplicant.conf file will...
+        # ...have been modified during the last ~20ish seconds
+        # ...at least have one network={...} entry
+
+        # CAREFUL: getctime() behaves differently than one may think:
+        # https://docs.python.org/3/library/os.path.html#os.path.getctime
+        wpa_supplicant_path = '/etc/wpa_supplicant/wpa_supplicant.conf'
+
+        # Threshold in seconds
+        modified_threshold = 20
+        now_timestamp = time.time()
+
+        try:
+            modified_timestamp = path.getctime(wpa_supplicant_path)
+            is_modified = (now_timestamp - modified_timestamp <= modified_threshold)
+
+        except OSError as exc:
+            # File not found or not accessible
+            print(exc)
+
+        # grep regex network and count each line it appeared in
+        cmd_count_network_entries = '''grep -i "^network=" {} | wc -l'''.format(wpa_supplicant_path)
+        value = self.cmd(cmd_count_network_entries)
+        try:
+            network_entry_count = int(value)
+        except ValueError as exc:
+            network_entry_count = 0
+            print(exc)
+
+        return (is_modified and network_entry_count > 0)
 
     def connect_wifi_post_wps(self):
         # -B = Background
@@ -68,21 +117,21 @@ class NetworkManager():
         # -D = Driver
         # -c = path to configuration file
 
-        cmd_kill_wpa='''killall -q wpa_supplicant'''
+        cmd_kill_wpa ='''killall -q wpa_supplicant'''
         cmd = '''wpa_supplicant -B w -D wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf'''
 
         print(self.cmd(cmd_kill_wpa))
-        sleep(3)
+        time.sleep(3)
         print(self.cmd(cmd))
 
     def restart_wifi_interface(self):
         # Stop existing WPA_Supplicant Process with Old Config
         print(self.cmd('killall -q wpa_supplicant'))
-        sleep(3)
+        time.sleep(3)
 
         # restart wlan0 interface
         print(self.cmd('sudo ip link set wlan0 down'))
-        sleep(1)
+        time.sleep(1)
         print(self.cmd('sudo ip link set wlan0 up'))
 
     def reset_wpa_supplicant_develop(self):

@@ -87,8 +87,12 @@ class Housekeeper(Subject):
                 pass
 
             used_wps = True
-            self.network_manager.initiate_wps()
-            sleep(15)
+            is_connected = self.network_manager.initiate_wps()
+            if is_connected:
+                # Break this loop
+                print('This was a triumph!')
+                break
+            sleep(5)
             counter = counter + 1
 
             if counter == 10:
