@@ -177,7 +177,7 @@ class Housekeeper(Subject):
     def update(self):
         self.notify()
 
-    def switch_mode(self, mode:MODE):
+    def switch_mode(self, mode: MODE):
         if self.mode is not mode:
             self.mode = mode
             self.update()
