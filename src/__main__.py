@@ -73,7 +73,7 @@ def main():
     try:
         cwd_path = os.getcwd()
 
-        housekeeper = Housekeeper()
+        housekeeper = Housekeeper(repo_path=cwd_path)
         display = Display()
 
         housekeeper.attach(display)
@@ -82,7 +82,6 @@ def main():
         display.start()
 
         housekeeper.boot()
-
         # housekeeper.clear_mode()
         # housekeeper.cycle_mode()
 

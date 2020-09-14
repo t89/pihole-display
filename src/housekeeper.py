@@ -37,9 +37,10 @@ class Housekeeper(Subject):
         for observer in self._observers:
             observer.update(self)
 
-    def __init__(self):
+    def __init__(self, repo_path):
         ##
         # Initial Mode
+        self.repo_path = repo_path
         self.encoding = 'utf-8'
         self.mode = MODE.CLEAR
         self.current_message_dict = {}
