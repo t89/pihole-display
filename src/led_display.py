@@ -794,7 +794,7 @@ class Display(Observer, threading.Thread):
             elif self.current_mode is MODE.INTRO:
                 self.draw_intro_view(tick=tick)
             elif self.current_mode is MODE.CLEAR:
-                pass
+                self.clear_display()
             elif self.current_mode is MODE.PROGRESS:
                 self.draw_progress_view(tick=tick)
             elif self.current_mode is MODE.WARNING:
