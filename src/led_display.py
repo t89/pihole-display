@@ -171,17 +171,17 @@ class Display(Observer, threading.Thread):
 
     def config_for_mode(self, mode: MODE):
         config = {}
-        if MODE.INTRO:
+        if mode == MODE.INTRO:
             pass
-        elif MODE.CLEAR:
+        elif mode == MODE.CLEAR:
             pass
-        elif MODE.CYCLE:
+        elif mode == MODE.CYCLE:
             config = {'should_cycle' : True,
                       'state_count': 4,
                       'durations_for_state': [10, 15, 10, 10]}
-        elif MODE.PROGRESS:
+        elif mode == MODE.PROGRESS:
             pass
-        elif MODE.WARNING:
+        elif mode == MODE.WARNING:
             pass
         return config
 
