@@ -84,7 +84,7 @@ def main():
         housekeeper.boot()
 
         # housekeeper.clear_mode()
-        housekeeper.cycle_mode()
+        # housekeeper.cycle_mode()
 
         # check_reboot_mode(housekeeper)
         # check_cycle_mode(housekeeper)
