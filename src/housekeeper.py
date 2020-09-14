@@ -168,6 +168,10 @@ class Housekeeper(Subject):
 
         self.network_manager.api_test()
 
+        # self.intro_mode()
+        # sleep(6)
+        self.cycle_mode()
+
     ##
     # Pihole Management
     def update(self):
